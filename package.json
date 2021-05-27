@@ -1,0 +1,28 @@
+{
+  "name": "vue-daterange-picker",
+  "version": "0.0.1",
+  "description": "Date range picker implements with Vue.js.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Azurewarth0920/vue-daterange-picker.git"
+  },
+  "author": "pei.fan",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Azurewarth0920/vue-daterange-picker/issues"
+  },
+  "homepage": "https://github.com/Azurewarth0920/vue-daterange-picker#readme",
+  "devDependencies": {
+    "vue": "^3.0.5",
+    "@vitejs/plugin-vue": "^1.2.2",
+    "@vue/compiler-sfc": "^3.0.5",
+    "typescript": "^4.1.3",
+    "vite": "^2.3.4",
+    "vue-tsc": "^0.0.24"
+  }
+}
