@@ -48,3 +48,27 @@ export const getDateCalendar = (
       }
     })
 }
+
+export const getWeekCalendar = (
+  year: number,
+  month: number,
+  from: WeekStartsFrom = 'sun'
+) => {
+  const firstDay = new Date(year, month - 1, 1)
+  const lastDay = new Date(year, month, 0)
+  const startingMargin = (7 - firstDay.getDay() - (from === 'sun' ? 0 : 1)) % 7
+  const totalWeeks = Math.ceil((lastDay.getDate() - startingMargin) / 7)
+  const marginWeek = {
+    month,
+    day: [...Array(startingMargin)].map((_, key) => key + 1),
+  }
+  const normalWeeks = [
+    ...[...Array(totalWeeks - 1)].map(() => 7),
+    (lastDay.getDate() - startingMargin) % 7,
+  ].map((item, key) => ({
+    month,
+    day: [...Array(item)].map((_, day) => day + 1 + key * 7 + startingMargin),
+  }))
+
+  return [marginWeek, ...normalWeeks]
+}
