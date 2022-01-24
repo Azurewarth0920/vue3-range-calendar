@@ -1,5 +1,5 @@
 import { App, Plugin } from 'vue'
-import VueDateRangePicker from './lib/wrapper.vue'
+import VueDateRangePicker from './lib/wrapper'
 
 const plugin: Plugin = {
   install: (app: App, options: any) => {
