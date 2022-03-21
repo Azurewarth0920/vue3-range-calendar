@@ -9,9 +9,8 @@ const refTable: Record<number, string> = {
   6: 'sat',
 }
 
-export const getDateCalendar = (
-  year: number,
-  month: number,
+export const getDateCells = (
+  { year, month }: { year: number; month: number },
   from: WeekStartsFrom = 'sun'
 ) => {
   const firstDay = new Date(year, month - 1, 1)
@@ -49,9 +48,8 @@ export const getDateCalendar = (
     })
 }
 
-export const getWeekCalendar = (
-  year: number,
-  month: number,
+export const getWeekCells = (
+  { year, month }: { year: number; month: number },
   from: WeekStartsFrom = 'sun'
 ) => {
   const firstDay = new Date(year, month - 1, 1)
@@ -60,15 +58,21 @@ export const getWeekCalendar = (
   const totalWeeks = Math.ceil((lastDay.getDate() - startingMargin) / 7)
   const marginWeek = {
     month,
-    day: [...Array(startingMargin)].map((_, key) => key + 1),
+    days: [...Array(startingMargin)].map((_, key) => key + 1),
   }
   const normalWeeks = [
     ...[...Array(totalWeeks - 1)].map(() => 7),
     (lastDay.getDate() - startingMargin) % 7,
   ].map((item, key) => ({
     month,
-    day: [...Array(item)].map((_, day) => day + 1 + key * 7 + startingMargin),
+    days: [...Array(item)].map((_, day) => day + 1 + key * 7 + startingMargin),
   }))
 
   return [marginWeek, ...normalWeeks]
 }
+
+export const getMonthCells = ({ year }: { year: number }) =>
+  [...Array(12)].map((_, key) => `${year}/${key + 1}`)
+
+export const getYearCells = ({ year }: { year: number }) =>
+  [...Array(12)].map((_, key) => (key + year - ((year - 1970) % 12)).toString())
