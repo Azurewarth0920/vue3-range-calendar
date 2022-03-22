@@ -1,5 +1,4 @@
 <template>
-  <h1>HelloWorld</h1>
   <daterange-picker></daterange-picker>
 </template>
 

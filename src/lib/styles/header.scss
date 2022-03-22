@@ -1,0 +1,44 @@
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+
+  &_title {
+    background-color: white;
+    border: none;
+    cursor: pointer;
+  }
+
+  &_button {
+    display: block;
+    --button-size: 35px;
+    width: var(--button-size);
+    height: var(--button-size);
+    overflow: hidden;
+    text-indent: -9999px;
+    position: relative;
+    border-radius: 3px;
+    background-color: white;
+    border: none;
+    box-shadow: 0 0 5px rgb(150, 150, 150);
+    cursor: pointer;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: calc(50% - 4px);
+      width: 8px;
+      height: 8px;
+      border-top: 2px solid #000;
+      border-left: 2px solid #000;
+    }
+
+    &.-prev::before {
+      left: calc(50% - 2px);
+      transform: rotate(-45deg);
+    }
+    &.-next::before {
+      left: calc(50% - 6px);
+      transform: rotate(135deg);
+    }
+  }
+}

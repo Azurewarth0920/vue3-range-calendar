@@ -1,0 +1,17 @@
+.calendar-body {
+  display: grid;
+  margin-top: 15px;
+
+  &.-date {
+    grid-template-columns: repeat(7, 1fr);
+  }
+
+  &.-week {
+    grid-template-columns: 1fr;
+  }
+
+  &.-month,
+  &.-year {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}

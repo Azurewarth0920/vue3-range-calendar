@@ -1,0 +1,20 @@
+.calendar-cell {
+  padding: 0;
+  margin-top: 5px;
+  --button-size: 35px;
+  width: var(--button-size);
+  height: var(--button-size);
+  background-color: #fff;
+  border: none;
+  cursor: pointer;
+
+  &:hover {
+    border: 2px solid #3db2ff;
+    border-radius: 10px;
+  }
+
+  &.-last,
+  &.-next {
+    color: #7a7a7a;
+  }
+}

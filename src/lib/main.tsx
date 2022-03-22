@@ -4,7 +4,7 @@ import CalendarHeader from './components/CalendarHeader'
 import { defaults, Options } from './options'
 import merge from 'lodash.merge'
 import { serializeDate } from './utils/normalizedDate'
-import { MONTH_A_YEAR } from './constants'
+import { CELLS_IN_BLOCK, MONTH_A_YEAR } from './constants'
 
 export default defineComponent({
   props: {
@@ -28,19 +28,27 @@ export default defineComponent({
     // emit week selected
     const handleSwitchMonth = (direction: 1 | -1 = 1) => {
       const offset =
-        (['year', 'month'].includes(calendarState.currentType)
+        calendarState.currentType === 'year'
+          ? MONTH_A_YEAR * CELLS_IN_BLOCK
+          : calendarState.currentType === 'month'
           ? MONTH_A_YEAR
-          : 1) * direction
-      calendarState.currentDate += offset
+          : 1
+
+      calendarState.currentDate += offset * direction
     }
-    const handleSwitchType = (type: 'month' | 'year') => {
-      calendarState.currentType = type
+
+    const handleSwitchType = () => {
+      if (calendarState.currentType === 'month') {
+        calendarState.currentType = 'year'
+        return
+      }
+      calendarState.currentType = 'month'
     }
 
     return () => (
       <div>
         {[...Array(mergedOptions.count)].map((_, index) => (
-          <div>
+          <div class="calendar-wrapper">
             <CalendarHeader
               date={calendarState.currentDate}
               offset={index}
@@ -48,8 +56,7 @@ export default defineComponent({
               showGoPrev={index === 0}
               showGoNext={index === mergedOptions.count - 1}
               onPrevClicked={() => handleSwitchMonth(-1)}
-              onYearClicked={() => handleSwitchType('year')}
-              onMonthClicked={() => handleSwitchType('month')}
+              onSwitchType={() => handleSwitchType()}
               onNextClicked={() => handleSwitchMonth()}
             />
             <CalendarBody
