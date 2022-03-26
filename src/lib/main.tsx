@@ -40,7 +40,10 @@ export default defineComponent({
       calendarState.currentDate += offset * direction
     }
 
-    const bound = computed(() => {
+    const bound = computed<{
+      upper: [number, number] | null
+      lower: [number, number] | null
+    }>(() => {
       const start = calendarState.selectedStart
         ?.split('-')
         .map(item => parseInt(item, 10))
@@ -56,12 +59,12 @@ export default defineComponent({
 
       return start[0] > end[0] || (start[0] === end[0] && start[1] > end[1])
         ? {
-            upper: start,
-            lower: end,
+            upper: start as [number, number],
+            lower: end as [number, number],
           }
         : {
-            upper: end,
-            lower: start,
+            upper: end as [number, number],
+            lower: start as [number, number],
           }
     })
 
@@ -108,9 +111,7 @@ export default defineComponent({
             <CalendarBody
               date={calendarState.currentDate + index}
               type={calendarState.currentType}
-              selectedStart={calendarState.selectedStart}
-              upper={bound.value.upper}
-              lower={bound.value.lower}
+              bound={bound.value}
               isSelecting={!calendarState.selectedEnd}
               onCellHovered={handleCellHovered}
               onCellSelected={handleCellSelect}

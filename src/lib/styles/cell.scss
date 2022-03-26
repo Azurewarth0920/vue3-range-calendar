@@ -8,7 +8,7 @@
   border: none;
   cursor: pointer;
 
-  &:hover {
+  &:hover:not(.-upper):not(.-lower):not(.-interval) {
     border: 2px solid #3db2ff;
     border-radius: 10px;
   }
@@ -18,35 +18,38 @@
     color: #7a7a7a;
   }
 
-  &.-interval-selecting {
-    border-radius: 0;
+  &.-upper,
+  &.-lower {
     color: #fff;
-    background-color: #93d4ff;
+    background-color: #2aa9fd;
+  }
+
+  &.-upper {
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
+  }
+
+  &.-lower {
+    border-top-left-radius: 6px;
+    border-bottom-left-radius: 6px;
   }
 
   &.-interval {
     border-radius: 0;
     color: #fff;
-    background-color: #2aa9fd;
+    background-color: #93d4ff;
   }
 
-  &.-upper.-lower,
-  &.-start {
+  &.-upper:not(.-settled),
+  &.-lower:not(.-settled) {
+    color: #fff;
+    background-color: #93d4ff;
+  }
+
+  &.-selected.-interval,
+  &.-lower.-selected,
+  &.-upper.-selected {
     color: #fff;
     background-color: #2aa9fd;
-  }
-
-  &.-start.-lower,
-  &:hover.-lower,
-  &.-lower.-interval {
-    border-top-left-radius: 6px;
-    border-bottom-left-radius: 6px;
-  }
-
-  &.-start.-upper,
-  &:hover.-upper,
-  &.-upper.-interval {
-    border-top-right-radius: 6px;
-    border-bottom-right-radius: 6px;
   }
 }

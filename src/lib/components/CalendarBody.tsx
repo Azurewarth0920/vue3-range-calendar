@@ -1,4 +1,4 @@
-import { computed, defineComponent, PropType, toRef } from 'vue'
+import { defineComponent, PropType, ref, watchEffect } from 'vue'
 import { Options } from '../options'
 import CalendarCell from './CalendarCell'
 import * as cells from '../cells'
@@ -14,21 +14,16 @@ export default defineComponent({
       type: String as PropType<Options['type']>,
       required: true,
     },
-    upper: {
-      type: Array as PropType<number[] | null>,
-      default: null,
-    },
-    lower: {
-      type: Array as PropType<number[] | null>,
-      default: null,
+    bound: {
+      type: Object as PropType<{
+        upper: [number, number] | null
+        lower: [number, number] | null
+      }>,
+      required: true,
     },
     isSelecting: {
       type: Boolean,
       required: true,
-    },
-    selectedStart: {
-      type: String as PropType<string | null>,
-      default: null,
     },
   },
   emits: ['cellSelected', 'cellHovered'],
@@ -47,24 +42,36 @@ export default defineComponent({
     const getIntervalClass = (
       currentMonth: number,
       currentDate: number
-    ): string | null => {
-      if (!props.upper || !props.lower) return null
+    ): string | false => {
+      if (!props.bound.upper || !props.bound.lower) return false
 
-      const [upperMonth, upperDate] = props.upper
-      const [lowerMonth, lowerDate] = props.lower
+      const [upperMonth, upperDate] = props.bound.upper
+      const [lowerMonth, lowerDate] = props.bound.lower
 
       const isInterval =
         (upperMonth > currentMonth ||
-          (upperMonth === currentMonth && upperDate >= currentDate)) &&
+          (upperMonth === currentMonth && upperDate > currentDate)) &&
         (currentMonth > lowerMonth ||
-          (currentMonth === lowerMonth && currentDate >= lowerDate))
+          (currentMonth === lowerMonth && currentDate > lowerDate))
 
-      return isInterval
-        ? props.isSelecting
-          ? '-interval-selecting'
-          : '-interval'
-        : null
+      return isInterval && '-interval'
     }
+
+    const settledDate = ref<[number, number] | null>(null)
+
+    watchEffect(() => {
+      if (props.bound.lower && props.bound.upper) {
+        if (settledDate.value == null) {
+          settledDate.value = props.bound.lower
+        }
+      }
+    })
+
+    watchEffect(() => {
+      if (props.isSelecting) {
+        settledDate.value = null
+      }
+    })
 
     return () => (
       <div
@@ -74,21 +81,22 @@ export default defineComponent({
         {props.type === 'date' &&
           cells
             .getDateCells(deserializeDate(props.date))
-            .map(({ date, type, day, offset }, index) => (
+            .map(({ date, type, day, month }) => (
               <CalendarCell
                 class={[
                   `-${type}`,
                   `-${day}`,
-                  props.upper?.join('-') === `${props.date + offset}-${date}` &&
+                  props.bound.upper?.join('-') === `${month}-${date}` &&
                     '-upper',
-                  props.lower?.join('-') === `${props.date + offset}-${date}` &&
+                  props.bound.lower?.join('-') === `${month}-${date}` &&
                     '-lower',
-                  props.selectedStart === `${props.date + offset}-${date}` &&
-                    '-start',
-                  getIntervalClass(props.date + offset, date),
+                  settledDate.value?.join('-') === `${month}-${date}` &&
+                    '-settled',
+                  !props.isSelecting && '-selected',
+                  getIntervalClass(month, date),
                 ]}
-                key={`${props.date + offset}-${date}-${index}`}
-                payload={`${props.date + offset}-${date}`}>
+                key={`${month}-${date}`}
+                payload={`${month}-${date}`}>
                 {date}
               </CalendarCell>
             ))}

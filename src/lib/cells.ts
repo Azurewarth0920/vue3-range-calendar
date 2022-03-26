@@ -1,3 +1,5 @@
+import { MONTH_A_YEAR } from './constants'
+
 type WeekStartsFrom = 'mon' | 'sun'
 const refTable: Record<number, string> = {
   0: 'sun',
@@ -29,7 +31,7 @@ export const getDateCells = (
           date: lastDayOfLastMonth.getDate() - startingMargin + item,
           type: 'last',
           day: refTable[lastDayOfLastMonth.getDay() - startingMargin + item],
-          offset: -1,
+          month: year * MONTH_A_YEAR + month - 1,
         }
       }
 
@@ -38,7 +40,7 @@ export const getDateCells = (
           date: item - startingMargin - lastDay.getDate(),
           type: 'next',
           day: refTable[item - startingMargin - lastDay.getDate()],
-          offset: 1,
+          month: year * MONTH_A_YEAR + month + 1,
         }
       }
 
@@ -46,7 +48,7 @@ export const getDateCells = (
         date: item - startingMargin,
         type: 'current',
         day: refTable[(firstDay.getDay() + item - startingMargin - 1) % 7],
-        offset: 0,
+        month: year * MONTH_A_YEAR + month,
       }
     })
 }
