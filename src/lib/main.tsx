@@ -1,8 +1,7 @@
-import { defineComponent, PropType, reactive } from 'vue'
+import { computed, defineComponent, PropType, reactive } from 'vue'
 import CalendarBody from './components/CalendarBody'
 import CalendarHeader from './components/CalendarHeader'
 import { defaults, Options } from './options'
-import merge from 'lodash.merge'
 import { serializeDate } from './utils/normalizedDate'
 import { CELLS_IN_BLOCK, MONTH_A_YEAR } from './constants'
 
@@ -15,12 +14,16 @@ export default defineComponent({
   },
   setup(props) {
     // props.options should merge
-    const mergedOptions = merge(defaults, props.options)
+    const mergedOptions = {
+      ...defaults,
+      ...props.options,
+    }
     const calendarState = reactive({
-      currentSelectedStart: mergedOptions.startDate,
+      selectedStart: null as string | null,
+      hovered: null as string | null,
+      selectedEnd: null as string | null,
       currentDate: serializeDate(mergedOptions.startDate),
       currentType: mergedOptions.type,
-      // hovered place
     })
 
     // emit startDate select
@@ -37,12 +40,55 @@ export default defineComponent({
       calendarState.currentDate += offset * direction
     }
 
+    const bound = computed(() => {
+      const start = calendarState.selectedStart
+        ?.split('-')
+        .map(item => parseInt(item, 10))
+      const end = (calendarState.selectedEnd || calendarState.hovered)
+        ?.split('-')
+        .map(item => parseInt(item, 10))
+
+      if (!start || !end)
+        return {
+          upper: null,
+          lower: null,
+        }
+
+      return start[0] > end[0] || (start[0] === end[0] && start[1] > end[1])
+        ? {
+            upper: start,
+            lower: end,
+          }
+        : {
+            upper: end,
+            lower: start,
+          }
+    })
+
     const handleSwitchType = () => {
       if (calendarState.currentType === 'month') {
         calendarState.currentType = 'year'
         return
       }
       calendarState.currentType = 'month'
+    }
+
+    const handleCellHovered = (payload: string) => {
+      calendarState.hovered = payload
+    }
+
+    const handleCellSelect = (payload: string) => {
+      if (calendarState.selectedStart && calendarState.selectedEnd) {
+        calendarState.selectedStart = payload
+        calendarState.selectedEnd = null
+        return
+      }
+
+      if (calendarState.selectedStart == null) {
+        calendarState.selectedStart = payload
+      } else {
+        calendarState.selectedEnd = payload
+      }
     }
 
     return () => (
@@ -62,6 +108,12 @@ export default defineComponent({
             <CalendarBody
               date={calendarState.currentDate + index}
               type={calendarState.currentType}
+              selectedStart={calendarState.selectedStart}
+              upper={bound.value.upper}
+              lower={bound.value.lower}
+              isSelecting={!calendarState.selectedEnd}
+              onCellHovered={handleCellHovered}
+              onCellSelected={handleCellSelect}
             />
           </div>
         ))}

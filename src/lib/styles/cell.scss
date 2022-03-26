@@ -17,4 +17,36 @@
   &.-next {
     color: #7a7a7a;
   }
+
+  &.-interval-selecting {
+    border-radius: 0;
+    color: #fff;
+    background-color: #93d4ff;
+  }
+
+  &.-interval {
+    border-radius: 0;
+    color: #fff;
+    background-color: #2aa9fd;
+  }
+
+  &.-upper.-lower,
+  &.-start {
+    color: #fff;
+    background-color: #2aa9fd;
+  }
+
+  &.-start.-lower,
+  &:hover.-lower,
+  &.-lower.-interval {
+    border-top-left-radius: 6px;
+    border-bottom-left-radius: 6px;
+  }
+
+  &.-start.-upper,
+  &:hover.-upper,
+  &.-upper.-interval {
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
+  }
 }
