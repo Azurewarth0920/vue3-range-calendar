@@ -61,19 +61,16 @@ export const getWeekCells = (
   const lastDay = new Date(year, month, 0)
   const startingMargin = (7 - firstDay.getDay() - (from === 'sun' ? 0 : 1)) % 7
   const totalWeeks = Math.ceil((lastDay.getDate() - startingMargin) / 7)
-  const marginWeek = {
-    month,
-    days: [...Array(startingMargin)].map((_, key) => key + 1),
-  }
-  const normalWeeks = [
-    ...[...Array(totalWeeks - 1)].map(() => 7),
-    (lastDay.getDate() - startingMargin) % 7,
-  ].map((item, key) => ({
-    month,
-    days: [...Array(item)].map((_, day) => day + 1 + key * 7 + startingMargin),
-  }))
+  const marginWeek = [...Array(startingMargin)].map((_, key) => key + 1)
 
-  return [marginWeek, ...normalWeeks]
+  const normalWeeks = [
+    ...[...Array(totalWeeks - 1)].fill(7),
+    lastDay.getDate() - startingMargin - (totalWeeks - 1) * 7,
+  ].map((item, key) =>
+    [...Array(item)].map((_, day) => day + 1 + key * 7 + startingMargin)
+  )
+
+  return marginWeek.length ? [marginWeek, ...normalWeeks] : normalWeeks
 }
 
 export const getMonthCells = () => [...Array(12)].map((_, key) => `${key + 1}`)

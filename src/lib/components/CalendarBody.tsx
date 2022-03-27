@@ -105,11 +105,13 @@ export default defineComponent({
         {props.type === 'week' &&
           cells
             .getWeekCells(deserializeDate(props.date))
-            .map(({ days }, index) => (
+            .map((days, index) => (
               <CalendarCell
                 class={[`-${props.type}`]}
                 key={`${props.date}-${index}`}
-                payload={`${props.date}-${index}`}>{`${index}(${days.toString()})`}</CalendarCell>
+                payload={`${props.date}-${index}`}>{`${index}(${days[0]}-${
+                days[days.length - 1]
+              })`}</CalendarCell>
             ))}
         {props.type === 'month' &&
           cells.getMonthCells().map(month => (
