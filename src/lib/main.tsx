@@ -13,22 +13,19 @@ export default defineComponent({
     },
   },
   setup(props) {
-    // props.options should merge
-    const mergedOptions = {
+    const options = {
       ...defaults,
       ...props.options,
     }
+
     const calendarState = reactive({
       selectedStart: null as string | null,
       hovered: null as string | null,
       selectedEnd: null as string | null,
-      currentDate: serializeDate(mergedOptions.startDate),
-      currentType: mergedOptions.type,
+      currentDate: serializeDate(options.startDate),
+      currentType: options.type,
     })
 
-    // emit startDate select
-    // emit endDate select
-    // emit week selected
     const dateOffset = computed(() => {
       return calendarState.currentType === 'year'
         ? MONTH_A_YEAR * CELLS_IN_BLOCK
@@ -37,8 +34,8 @@ export default defineComponent({
         : 1
     })
 
-    const handleSwitchMonth = (direction: 1 | -1 = 1) => {
-      calendarState.currentDate += dateOffset.value * direction
+    const handleSwitch = (direction: 1 | -1 = 1) => {
+      calendarState.currentDate += dateOffset.value * direction * options.count
     }
 
     const bound = computed<{
@@ -82,6 +79,19 @@ export default defineComponent({
     }
 
     const handleCellSelect = (payload: string) => {
+      // Switch type
+      if (calendarState.currentType !== options.type) {
+        calendarState.currentDate = parseInt(payload, 10)
+
+        calendarState.currentType = {
+          year: 'month',
+          month: options.type,
+        }[calendarState.currentType as 'month' | 'year'] as Options['type']
+
+        return
+      }
+
+      // Selecting
       if (calendarState.selectedStart && calendarState.selectedEnd) {
         calendarState.selectedStart = payload
         calendarState.selectedEnd = null
@@ -97,16 +107,16 @@ export default defineComponent({
 
     return () => (
       <div class="calendar-wrapper">
-        {[...Array(mergedOptions.count)].map((_, index) => (
+        {[...Array(options.count)].map((_, index) => (
           <div class="calendar-unit">
             <CalendarHeader
               date={calendarState.currentDate + index * dateOffset.value}
               type={calendarState.currentType}
               showGoPrev={index === 0}
-              showGoNext={index === mergedOptions.count - 1}
-              onPrevClicked={() => handleSwitchMonth(-1)}
-              onSwitchType={() => handleSwitchType()}
-              onNextClicked={() => handleSwitchMonth()}
+              showGoNext={index === options.count - 1}
+              onPrevClicked={() => handleSwitch(-1)}
+              onSwitchType={handleSwitchType}
+              onNextClicked={handleSwitch}
             />
             <CalendarBody
               date={calendarState.currentDate + index * dateOffset.value}

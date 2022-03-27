@@ -3,6 +3,7 @@ import { Options } from '../options'
 import CalendarCell from './CalendarCell'
 import * as cells from '../cells'
 import { deserializeDate } from '../utils/normalizedDate'
+import { MONTH_A_YEAR } from '../constants'
 
 export default defineComponent({
   props: {
@@ -115,7 +116,11 @@ export default defineComponent({
             <CalendarCell
               class={[`-${props.type}`]}
               key={`${props.date}-${month}`}
-              payload={month}>
+              payload={(
+                deserializeDate(props.date).year * MONTH_A_YEAR +
+                parseInt(month, 10) -
+                1
+              ).toString()}>
               {month}
             </CalendarCell>
           ))}
@@ -124,7 +129,7 @@ export default defineComponent({
             <CalendarCell
               class={[`-${props.type}`]}
               key={`${props.date}-${year}`}
-              payload={year}>
+              payload={(parseInt(year, 10) * MONTH_A_YEAR).toString()}>
               {year}
             </CalendarCell>
           ))}
