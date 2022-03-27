@@ -1,12 +1,20 @@
 .calendar-cell {
   padding: 0;
   margin-top: 5px;
-  --button-size: 35px;
-  width: var(--button-size);
+  width: 100%;
   height: var(--button-size);
   background-color: #fff;
   border: none;
   cursor: pointer;
+
+  &.-date {
+    --button-size: 35px;
+  }
+
+  &.-year,
+  &.-month {
+    --button-size: 50px;
+  }
 
   &:hover:not(.-upper):not(.-lower):not(.-interval) {
     border: 2px solid #3db2ff;

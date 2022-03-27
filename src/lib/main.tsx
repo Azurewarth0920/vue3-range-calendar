@@ -29,15 +29,16 @@ export default defineComponent({
     // emit startDate select
     // emit endDate select
     // emit week selected
-    const handleSwitchMonth = (direction: 1 | -1 = 1) => {
-      const offset =
-        calendarState.currentType === 'year'
-          ? MONTH_A_YEAR * CELLS_IN_BLOCK
-          : calendarState.currentType === 'month'
-          ? MONTH_A_YEAR
-          : 1
+    const dateOffset = computed(() => {
+      return calendarState.currentType === 'year'
+        ? MONTH_A_YEAR * CELLS_IN_BLOCK
+        : calendarState.currentType === 'month'
+        ? MONTH_A_YEAR
+        : 1
+    })
 
-      calendarState.currentDate += offset * direction
+    const handleSwitchMonth = (direction: 1 | -1 = 1) => {
+      calendarState.currentDate += dateOffset.value * direction
     }
 
     const bound = computed<{
@@ -95,12 +96,11 @@ export default defineComponent({
     }
 
     return () => (
-      <div>
+      <div class="calendar-wrapper">
         {[...Array(mergedOptions.count)].map((_, index) => (
-          <div class="calendar-wrapper">
+          <div class="calendar-unit">
             <CalendarHeader
-              date={calendarState.currentDate}
-              offset={index}
+              date={calendarState.currentDate + index * dateOffset.value}
               type={calendarState.currentType}
               showGoPrev={index === 0}
               showGoNext={index === mergedOptions.count - 1}
@@ -109,7 +109,7 @@ export default defineComponent({
               onNextClicked={() => handleSwitchMonth()}
             />
             <CalendarBody
-              date={calendarState.currentDate + index}
+              date={calendarState.currentDate + index * dateOffset.value}
               type={calendarState.currentType}
               bound={bound.value}
               isSelecting={!calendarState.selectedEnd}

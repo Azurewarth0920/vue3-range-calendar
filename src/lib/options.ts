@@ -13,6 +13,6 @@ export type Options = {
 export const defaults = {
   startDate: new Date(),
   isRange: null,
-  count: 1,
+  count: 2,
   type: 'date',
 }

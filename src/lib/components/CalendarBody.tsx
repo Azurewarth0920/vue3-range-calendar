@@ -81,11 +81,12 @@ export default defineComponent({
         {props.type === 'date' &&
           cells
             .getDateCells(deserializeDate(props.date))
-            .map(({ date, type, day, month }) => (
+            .map(({ date, position, day, month }) => (
               <CalendarCell
                 class={[
-                  `-${type}`,
+                  `-${position}`,
                   `-${day}`,
+                  `-${props.type}`,
                   props.bound.upper?.join('-') === `${month}-${date}` &&
                     '-upper',
                   props.bound.lower?.join('-') === `${month}-${date}` &&
@@ -105,18 +106,25 @@ export default defineComponent({
             .getWeekCells(deserializeDate(props.date))
             .map(({ days }, index) => (
               <CalendarCell
+                class={[`-${props.type}`]}
                 key={`${props.date}-${index}`}
                 payload={`${props.date}-${index}`}>{`${index}(${days.toString()})`}</CalendarCell>
             ))}
         {props.type === 'month' &&
-          cells.getMonthCells(deserializeDate(props.date)).map(month => (
-            <CalendarCell key={`${props.date}-${month}`} payload={month}>
+          cells.getMonthCells().map(month => (
+            <CalendarCell
+              class={[`-${props.type}`]}
+              key={`${props.date}-${month}`}
+              payload={month}>
               {month}
             </CalendarCell>
           ))}
         {props.type === 'year' &&
           cells.getYearCells(deserializeDate(props.date)).map(year => (
-            <CalendarCell key={`${props.date}-${year}`} payload={year}>
+            <CalendarCell
+              class={[`-${props.type}`]}
+              key={`${props.date}-${year}`}
+              payload={year}>
               {year}
             </CalendarCell>
           ))}

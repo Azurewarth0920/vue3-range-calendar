@@ -1,6 +1,6 @@
 .calendar-body {
   display: grid;
-  margin-top: 15px;
+  margin-top: 5px;
 
   &.-date {
     grid-template-columns: repeat(7, 1fr);
@@ -12,6 +12,6 @@
 
   &.-month,
   &.-year {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
   }
 }

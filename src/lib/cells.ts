@@ -29,7 +29,7 @@ export const getDateCells = (
       if (item <= startingMargin) {
         return {
           date: lastDayOfLastMonth.getDate() - startingMargin + item,
-          type: 'last',
+          position: 'last',
           day: refTable[lastDayOfLastMonth.getDay() - startingMargin + item],
           month: year * MONTH_A_YEAR + month - 1,
         }
@@ -38,7 +38,7 @@ export const getDateCells = (
       if (item > lastDay.getDate() + startingMargin) {
         return {
           date: item - startingMargin - lastDay.getDate(),
-          type: 'next',
+          position: 'next',
           day: refTable[item - startingMargin - lastDay.getDate()],
           month: year * MONTH_A_YEAR + month + 1,
         }
@@ -46,7 +46,7 @@ export const getDateCells = (
 
       return {
         date: item - startingMargin,
-        type: 'current',
+        position: 'current',
         day: refTable[(firstDay.getDay() + item - startingMargin - 1) % 7],
         month: year * MONTH_A_YEAR + month,
       }
@@ -76,8 +76,7 @@ export const getWeekCells = (
   return [marginWeek, ...normalWeeks]
 }
 
-export const getMonthCells = ({ year }: { year: number }) =>
-  [...Array(12)].map((_, key) => `${year}/${key + 1}`)
+export const getMonthCells = () => [...Array(12)].map((_, key) => `${key + 1}`)
 
 export const getYearCells = ({ year }: { year: number }) =>
   [...Array(12)].map((_, key) => (key + year - ((year - 1970) % 12)).toString())
