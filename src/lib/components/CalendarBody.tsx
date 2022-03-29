@@ -107,34 +107,64 @@ export default defineComponent({
             .getWeekCells(deserializeDate(props.date))
             .map((days, index) => (
               <CalendarCell
-                class={[`-${props.type}`]}
+                class={[
+                  `-${props.type}`,
+                  props.bound.upper?.join('-') === `${props.date}-${index}` &&
+                    '-upper',
+                  props.bound.lower?.join('-') === `${props.date}-${index}` &&
+                    '-lower',
+                  settledDate.value?.join('-') === `${props.date}-${index}` &&
+                    '-settled',
+                  !props.isSelecting && '-selected',
+                  getIntervalClass(props.date, index),
+                ]}
                 key={`${props.date}-${index}`}
-                payload={`${props.date}-${index}`}>{`${index}(${days[0]}-${
+                payload={`${props.date}-${index}`}>{`${index + 1}(${days[0]}-${
                 days[days.length - 1]
               })`}</CalendarCell>
             ))}
         {props.type === 'month' &&
-          cells.getMonthCells().map(month => (
-            <CalendarCell
-              class={[`-${props.type}`]}
-              key={`${props.date}-${month}`}
-              payload={(
-                deserializeDate(props.date).year * MONTH_A_YEAR +
-                parseInt(month, 10) -
-                1
-              ).toString()}>
-              {month}
-            </CalendarCell>
-          ))}
+          cells.getMonthCells().map(month => {
+            const payload =
+              deserializeDate(props.date).year * MONTH_A_YEAR +
+              parseInt(month, 10) -
+              1
+            return (
+              <CalendarCell
+                class={[
+                  `-${props.type}`,
+                  props.bound.upper?.[0] === payload && '-upper',
+                  props.bound.lower?.[0] === payload && '-lower',
+                  settledDate.value?.[0] === payload && '-settled',
+                  !props.isSelecting && '-selected',
+                  getIntervalClass(payload, 0),
+                ]}
+                key={`${props.date}-${month}`}
+                payload={payload.toString()}>
+                {month}
+              </CalendarCell>
+            )
+          })}
         {props.type === 'year' &&
-          cells.getYearCells(deserializeDate(props.date)).map(year => (
-            <CalendarCell
-              class={[`-${props.type}`]}
-              key={`${props.date}-${year}`}
-              payload={(parseInt(year, 10) * MONTH_A_YEAR).toString()}>
-              {year}
-            </CalendarCell>
-          ))}
+          cells.getYearCells(deserializeDate(props.date)).map(year => {
+            const payload = parseInt(year, 10) * MONTH_A_YEAR
+
+            return (
+              <CalendarCell
+                class={[
+                  `-${props.type}`,
+                  props.bound.upper?.[0] === payload && '-upper',
+                  props.bound.lower?.[0] === payload && '-lower',
+                  settledDate.value?.[0] === payload && '-settled',
+                  !props.isSelecting && '-selected',
+                  getIntervalClass(payload, 0),
+                ]}
+                key={`${props.date}-${year}`}
+                payload={payload.toString()}>
+                {year}
+              </CalendarCell>
+            )
+          })}
       </div>
     )
   },

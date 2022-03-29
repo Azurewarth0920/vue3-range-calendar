@@ -1,15 +1,10 @@
 .calendar-cell {
   padding: 0;
-  margin-top: 5px;
   width: 100%;
   height: var(--button-size);
   background-color: #fff;
   border: none;
   cursor: pointer;
-
-  &.-date {
-    --button-size: 35px;
-  }
 
   &.-year,
   &.-month {
@@ -32,14 +27,45 @@
     background-color: #2aa9fd;
   }
 
-  &.-upper {
-    border-top-right-radius: 6px;
-    border-bottom-right-radius: 6px;
+  &.-date {
+    --button-size: 35px;
+    margin-top: 5px;
+
+    &.-upper {
+      border-top-right-radius: 6px;
+      border-bottom-right-radius: 6px;
+    }
+
+    &.-lower {
+      border-top-left-radius: 6px;
+      border-bottom-left-radius: 6px;
+    }
   }
 
-  &.-lower {
-    border-top-left-radius: 6px;
-    border-bottom-left-radius: 6px;
+  &.-week {
+    --button-size: 40px;
+    border: 2px solid transparent;
+
+    &.-lower {
+      border-top-right-radius: 6px;
+      border-top-left-radius: 6px;
+    }
+
+    &.-upper {
+      border-bottom-left-radius: 6px;
+      border-bottom-right-radius: 6px;
+    }
+  }
+
+  &.-month,
+  &.-year {
+    &.-lower {
+      border-top-left-radius: 6px;
+    }
+
+    &.-upper {
+      border-bottom-right-radius: 6px;
+    }
   }
 
   &.-interval {
