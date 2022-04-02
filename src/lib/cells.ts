@@ -73,7 +73,14 @@ export const getWeekCells = (
   return marginWeek.length ? [marginWeek, ...normalWeeks] : normalWeeks
 }
 
-export const getMonthCells = () => [...Array(12)].map((_, key) => `${key + 1}`)
+export const getMonthCells = () => [...Array(12)].map((_, key) => key + 1)
 
 export const getYearCells = ({ year }: { year: number }) =>
-  [...Array(12)].map((_, key) => (key + year - ((year - 1970) % 12)).toString())
+  [...Array(12)].map((_, key) => key + year - ((year - 1970) % 12))
+
+export const table = {
+  date: getDateCells,
+  week: getWeekCells,
+  month: getMonthCells,
+  year: getYearCells,
+}

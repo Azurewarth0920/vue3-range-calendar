@@ -3,7 +3,7 @@ import { defineComponent, ref } from 'vue'
 export default defineComponent({
   props: {
     payload: {
-      type: String,
+      type: Number,
       required: true,
     },
   },

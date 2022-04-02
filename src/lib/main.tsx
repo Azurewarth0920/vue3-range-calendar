@@ -19,9 +19,9 @@ export default defineComponent({
     }
 
     const calendarState = reactive({
-      selectedStart: null as string | null,
-      hovered: null as string | null,
-      selectedEnd: null as string | null,
+      selectedStart: null as number | null,
+      hovered: null as number | null,
+      selectedEnd: null as number | null,
       currentDate: serializeDate(options.startDate),
       currentType: options.type,
     })
@@ -39,15 +39,11 @@ export default defineComponent({
     }
 
     const bound = computed<{
-      upper: [number, number] | null
-      lower: [number, number] | null
+      upper: number | null
+      lower: number | null
     }>(() => {
       const start = calendarState.selectedStart
-        ?.split('-')
-        .map(item => parseInt(item, 10))
-      const end = (calendarState.selectedEnd || calendarState.hovered)
-        ?.split('-')
-        .map(item => parseInt(item, 10))
+      const end = calendarState.selectedEnd || calendarState.hovered
 
       if (!start || !end)
         return {
@@ -55,15 +51,10 @@ export default defineComponent({
           lower: null,
         }
 
-      return start[0] > end[0] || (start[0] === end[0] && start[1] > end[1])
-        ? {
-            upper: start as [number, number],
-            lower: end as [number, number],
-          }
-        : {
-            upper: end as [number, number],
-            lower: start as [number, number],
-          }
+      return {
+        upper: start > end ? start : end,
+        lower: start > end ? end : start,
+      }
     })
 
     const handleSwitchType = () => {
@@ -74,14 +65,14 @@ export default defineComponent({
       calendarState.currentType = 'month'
     }
 
-    const handleCellHovered = (payload: string) => {
+    const handleCellHovered = (payload: number) => {
       calendarState.hovered = payload
     }
 
-    const handleCellSelect = (payload: string) => {
+    const handleCellSelect = (payload: number) => {
       // Switch type
       if (calendarState.currentType !== options.type) {
-        calendarState.currentDate = parseInt(payload, 10)
+        calendarState.currentDate = payload
 
         calendarState.currentType = {
           year: 'month',
