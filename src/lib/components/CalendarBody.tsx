@@ -7,9 +7,9 @@ import {
   getWeekCells,
   getMonthCells,
   getYearCells,
+  getWeekHeader,
 } from '../cells'
 import { deserializeDate } from '../utils/normalizedDate'
-import { MONTH_A_YEAR } from '../constants'
 
 export default defineComponent({
   props: {
@@ -83,15 +83,16 @@ export default defineComponent({
         classNames?: string[]
       }[]
     >(() => {
+      const { year, month } = deserializeDate(props.date)
       switch (props.type) {
         case 'date':
           return (cells.value as ReturnType<typeof getDateCells>).map(
             ({ date, position, day, month }) => ({
               classNames: [`-${position}`, `-${day}`],
               payload: parseInt(
-                `${deserializeDate(props.date).year}${month
+                `${year}${month.toString().padStart(2, '0')}${date
                   .toString()
-                  .padStart(2, '0')}${date.toString().padStart(2, '0')}`
+                  .padStart(2, '0')}`
               ),
               formatter: date.toString(),
             })
@@ -100,11 +101,7 @@ export default defineComponent({
           return (cells.value as ReturnType<typeof getWeekCells>).map(
             (days, index) => ({
               payload: parseInt(
-                `${deserializeDate(props.date).year}${deserializeDate(
-                  props.date
-                )
-                  .month.toString()
-                  .padStart(2, '0')}${index.toString()}`
+                `${year}${month.toString().padStart(2, '0')}${index.toString()}`
               ),
               formatter: days.toString(),
             })
@@ -112,11 +109,7 @@ export default defineComponent({
         case 'month':
           return (cells.value as ReturnType<typeof getMonthCells>).map(
             month => ({
-              payload: parseInt(
-                `${deserializeDate(props.date).year}${month
-                  .toString()
-                  .padStart(2, '0')}`
-              ),
+              payload: parseInt(`${year}${month.toString().padStart(2, '0')}`),
               formatter: month.toString(),
             })
           )
@@ -133,6 +126,10 @@ export default defineComponent({
         class={['calendar-body', `-${props.type}`]}
         onClick={e => handleMouseEvent(e, 'cellSelected')}
         onMouseover={e => handleMouseEvent(e, 'cellHovered')}>
+        {getWeekHeader().map(shortName => (
+          <span class="calendar-cell_leading">{shortName}</span>
+        ))}
+
         {cellAttrs.value.map(({ payload, classNames, formatter }) => (
           <CalendarCell
             class={[

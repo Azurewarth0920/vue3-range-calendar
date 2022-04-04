@@ -6,6 +6,10 @@
   border: none;
   cursor: pointer;
 
+  &_leading {
+    text-align: center;
+  }
+
   &.-year,
   &.-month {
     --button-size: 50px;

@@ -9,7 +9,7 @@ export default defineComponent({
   name: 'App',
   setup() {
     const options = {
-      type: 'year',
+      type: 'date',
     }
 
     return {

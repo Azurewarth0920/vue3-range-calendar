@@ -1,4 +1,4 @@
-import { MONTH_A_YEAR } from './constants'
+import { MILLISECOND_A_DAY, MONTH_A_YEAR } from './constants'
 
 type WeekStartsFrom = 'mon' | 'sun'
 const refTable: Record<number, string> = {
@@ -13,14 +13,14 @@ const refTable: Record<number, string> = {
 
 export const getDateCells = (
   { year, month }: { year: number; month: number },
-  from: WeekStartsFrom = 'sun'
+  offset: number = 0
 ) => {
   const firstDay = new Date(year, month - 1, 1)
   const lastDay = new Date(year, month, 0)
   const lastDayOfLastMonth = new Date(year, month - 1, 0)
 
-  const startingMargin = firstDay.getDay() - (from === 'sun' ? 0 : 1)
-  const endingMargin = (6 - lastDay.getDay() + (from === 'sun' ? 0 : 1)) % 7
+  const startingMargin = firstDay.getDay() - (offset % 7)
+  const endingMargin = (6 - lastDay.getDay() + (offset % 7)) % 7
   const totalCells = lastDay.getDate() + startingMargin + endingMargin
 
   return [...Array(totalCells)]
@@ -30,7 +30,9 @@ export const getDateCells = (
         return {
           date: lastDayOfLastMonth.getDate() - startingMargin + item,
           position: 'last',
-          day: refTable[lastDayOfLastMonth.getDay() - startingMargin + item],
+          day: refTable[
+            (lastDayOfLastMonth.getDay() - startingMargin + item + offset) % 7
+          ],
           month: year * MONTH_A_YEAR + month - 1,
         }
       }
@@ -39,7 +41,9 @@ export const getDateCells = (
         return {
           date: item - startingMargin - lastDay.getDate(),
           position: 'next',
-          day: refTable[item - startingMargin - lastDay.getDate()],
+          day: refTable[
+            (item - startingMargin - lastDay.getDate() + offset) % 7
+          ],
           month: year * MONTH_A_YEAR + month + 1,
         }
       }
@@ -47,7 +51,9 @@ export const getDateCells = (
       return {
         date: item - startingMargin,
         position: 'current',
-        day: refTable[(firstDay.getDay() + item - startingMargin - 1) % 7],
+        day: refTable[
+          (firstDay.getDay() + item - startingMargin - 1 + offset) % 7
+        ],
         month: year * MONTH_A_YEAR + month,
       }
     })
@@ -71,6 +77,18 @@ export const getWeekCells = (
   )
 
   return marginWeek.length ? [marginWeek, ...normalWeeks] : normalWeeks
+}
+
+export const getWeekHeader = (locale: string = 'en', offset: number = 0) => {
+  const FIRST_SUNDAY_TIME = 226800000
+  return [...Array(7)]
+    .map((_, index) => (index + offset) % 7)
+    .map(day => new Date(FIRST_SUNDAY_TIME + MILLISECOND_A_DAY * day))
+    .map(date =>
+      new Intl.DateTimeFormat(locale, {
+        weekday: 'short',
+      }).format(date)
+    )
 }
 
 export const getMonthCells = () => [...Array(12)].map((_, key) => key + 1)
