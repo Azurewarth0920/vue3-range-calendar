@@ -9,7 +9,7 @@ import {
   getYearCells,
   getWeekHeader,
 } from '../cells'
-import { deserializeDate } from '../utils/normalizedDate'
+import { deserializeDate } from '../utils'
 
 export default defineComponent({
   props: {
@@ -126,9 +126,10 @@ export default defineComponent({
         class={['calendar-body', `-${props.type}`]}
         onClick={e => handleMouseEvent(e, 'cellSelected')}
         onMouseover={e => handleMouseEvent(e, 'cellHovered')}>
-        {getWeekHeader().map(shortName => (
-          <span class="calendar-cell_leading">{shortName}</span>
-        ))}
+        {props.type === 'date' &&
+          getWeekHeader().map(shortName => (
+            <span class="calendar-cell_leading">{shortName}</span>
+          ))}
 
         {cellAttrs.value.map(({ payload, classNames, formatter }) => (
           <CalendarCell

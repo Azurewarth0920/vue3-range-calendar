@@ -2,17 +2,31 @@ import { computed, defineComponent, PropType, reactive } from 'vue'
 import CalendarBody from './components/CalendarBody'
 import CalendarHeader from './components/CalendarHeader'
 import { defaults, Options } from './options'
-import { serializeDate } from './utils/normalizedDate'
+import { payloadToDate, serializeDate } from './utils'
 import { CELLS_IN_BLOCK, MONTH_A_YEAR } from './constants'
 
 export default defineComponent({
   props: {
+    selected: {
+      type: Object as PropType<Date>,
+      default: null,
+    },
+    start: {
+      type: Object as PropType<Date>,
+      default: null,
+    },
+    end: {
+      type: Object as PropType<Date>,
+      default: null,
+    },
     options: {
       type: Object as PropType<Options>,
       default: () => {},
     },
   },
-  setup(props) {
+  emits: ['update:select', 'update:start', 'update:end'],
+
+  setup(props, { emit }) {
     const options = {
       ...defaults,
       ...props.options,
@@ -58,14 +72,12 @@ export default defineComponent({
     })
 
     const handleSwitchType = () => {
-      if (calendarState.currentType === 'month') {
-        calendarState.currentType = 'year'
-        return
-      }
-      calendarState.currentType = 'month'
+      calendarState.currentType =
+        calendarState.currentType === 'month' ? 'year' : 'month'
     }
 
     const handleCellHovered = (payload: number) => {
+      if (!options.isRange) return
       calendarState.hovered = payload
     }
 
@@ -74,25 +86,37 @@ export default defineComponent({
       if (calendarState.currentType !== options.type) {
         calendarState.currentDate = payload
 
-        calendarState.currentType = {
-          year: 'month',
-          month: options.type,
-        }[calendarState.currentType as 'month' | 'year'] as Options['type']
+        switch (calendarState.currentType) {
+          case 'year':
+            calendarState.currentType = 'month'
+            return
+          case 'month':
+            calendarState.currentType = options.type
+            return
+        }
+      }
 
+      // Select value
+      if (!options.isRange) {
+        calendarState.selectedStart = calendarState.s = payload
+        emit('update:select', payloadToDate(payload))
         return
       }
 
-      // Selecting
       if (calendarState.selectedStart && calendarState.selectedEnd) {
         calendarState.selectedStart = payload
         calendarState.selectedEnd = null
+        emit('update:start', payloadToDate(payload))
+        emit('update:end', null)
         return
       }
 
       if (calendarState.selectedStart == null) {
         calendarState.selectedStart = payload
+        emit('update:start', payloadToDate(payload))
       } else {
         calendarState.selectedEnd = payload
+        emit('update:end', null)
       }
     }
 

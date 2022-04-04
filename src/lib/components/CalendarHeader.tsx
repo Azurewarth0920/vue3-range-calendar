@@ -1,6 +1,6 @@
 import { computed, defineComponent, PropType, ref } from 'vue'
 import { Options } from '../options'
-import { deserializeDate } from '../utils/normalizedDate'
+import { deserializeDate } from '../utils'
 
 export default defineComponent({
   props: {
