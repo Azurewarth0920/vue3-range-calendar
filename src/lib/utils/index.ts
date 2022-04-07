@@ -20,36 +20,18 @@ export const deserializeDate = (date: number) => {
   }
 }
 
-export const payloadToDate = (payload: number): Date => {
-  const matches = payload.toString().match(/(\d{4})(\d{2})?(\d{2})?/)
-  if (matches) {
-    const [_, year, month = 1, date = 1] = matches
-    return new Date(`${year}-${month}-${date}`)
-  } else {
-    return new Date()
-  }
-}
-
-export const dateToNumber = (date: Date): number =>
-  parseInt(
-    `${date.getFullYear()}${date.getMonth().toString().padStart(2, '0')}${date
-      .getDay()
-      .toString()
-      .padStart(2, '0')}`,
-    10
-  )
+export const payloadToDate = (payload: number) => new Date(payload)
 
 export const calculateSpan = (
   payload: number,
   span: Span,
   direction: 1 | -1 = 1
 ): number => {
-  const matches = payload.toString().match(/(\d{4})(\d{2})?(\d{2})?/)
-  if (!matches) return payload
+  const date = new Date(payload)
 
-  let year = parseInt(matches[1], 10)
-  let month = parseInt(matches[2] || '1', 10)
-  let day = parseInt(matches[3] || '1', 10)
+  let year = date.getFullYear()
+  let month = date.getMonth()
+  let day = date.getDate()
 
   switch (span.unit) {
     case 'day':
@@ -66,5 +48,5 @@ export const calculateSpan = (
       break
   }
 
-  return dateToNumber(new Date(year, month - 1, day))
+  return new Date(year, month, day).getTime()
 }

@@ -110,33 +110,25 @@ export default defineComponent({
           return (cells.value as ReturnType<typeof getDateCells>).map(
             ({ date, position, day, month }) => ({
               classNames: [`-${position}`, `-${day}`],
-              payload: parseInt(
-                `${year}${month.toString().padStart(2, '0')}${date
-                  .toString()
-                  .padStart(2, '0')}`
-              ),
+              payload: new Date(year, month - 1, date).getTime(),
               formatter: date.toString(),
             })
           )
         case 'week':
-          return (cells.value as ReturnType<typeof getWeekCells>).map(
-            (days, index) => ({
-              payload: parseInt(
-                `${year}${month.toString().padStart(2, '0')}${index.toString()}`
-              ),
-              formatter: days.toString(),
-            })
-          )
+          return (cells.value as ReturnType<typeof getWeekCells>).map(days => ({
+            payload: new Date(year, month - 1, days[0]).getTime(),
+            formatter: days.toString(),
+          }))
         case 'month':
           return (cells.value as ReturnType<typeof getMonthCells>).map(
             month => ({
-              payload: parseInt(`${year}${month.toString().padStart(2, '0')}`),
+              payload: new Date(year, month - 1, 1).getTime(),
               formatter: month.toString(),
             })
           )
         case 'year':
           return (cells.value as ReturnType<typeof getYearCells>).map(year => ({
-            payload: year,
+            payload: new Date(year, 0, 1).getTime(),
             formatter: year.toString(),
           }))
       }

@@ -79,10 +79,12 @@ export default defineComponent({
     const selectable = computed(() => {
       return {
         available: props.options.available?.map(({ from, to }) => [
-          from ? dateToNumber(from) : null,
+          from ? from.getTime() : null,
+          to ? to.getTime() : null,
         ]),
         unavailable: props.options.unavailable?.map(({ from, to }) => [
-          from ? dateToNumber(from) : null,
+          from ? from.getTime() : null,
+          to ? to.getTime() : null,
         ]),
       }
     })
