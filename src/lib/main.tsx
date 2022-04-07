@@ -2,12 +2,7 @@ import { computed, defineComponent, PropType, reactive } from 'vue'
 import CalendarBody from './components/CalendarBody'
 import CalendarHeader from './components/CalendarHeader'
 import { defaults, Options } from './options'
-import {
-  calculateSpan,
-  dateToNumber,
-  payloadToDate,
-  serializeDate,
-} from './utils'
+import { calculateSpan, payloadToDate, serializeDate, trimTime } from './utils'
 import { CELLS_IN_BLOCK, MONTH_A_YEAR } from './constants'
 
 export default defineComponent({
@@ -76,15 +71,18 @@ export default defineComponent({
       }
     })
 
-    const selectable = computed(() => {
+    const selectable = computed<{
+      available: [number, number][] | undefined
+      unavailable: [number, number][] | undefined
+    }>(() => {
       return {
         available: props.options.available?.map(({ from, to }) => [
-          from ? from.getTime() : null,
-          to ? to.getTime() : null,
+          from ? trimTime(from) : Number.POSITIVE_INFINITY,
+          to ? trimTime(to) : Number.NEGATIVE_INFINITY,
         ]),
         unavailable: props.options.unavailable?.map(({ from, to }) => [
-          from ? from.getTime() : null,
-          to ? to.getTime() : null,
+          from ? trimTime(from) : Number.POSITIVE_INFINITY,
+          to ? trimTime(to) : Number.NEGATIVE_INFINITY,
         ]),
       }
     })
@@ -99,16 +97,16 @@ export default defineComponent({
       return {
         maxUpper: props.options.isRange.maxSpan
           ? calculateSpan(start, props.options.isRange.maxSpan)
-          : null,
+          : undefined,
         maxLower: props.options.isRange.maxSpan
           ? calculateSpan(start, props.options.isRange.maxSpan, -1)
-          : null,
+          : undefined,
         minUpper: props.options.isRange.minSpan
           ? calculateSpan(start, props.options.isRange.minSpan)
-          : null,
+          : undefined,
         minLower: props.options.isRange.minSpan
           ? calculateSpan(start, props.options.isRange.minSpan, -1)
-          : null,
+          : undefined,
       }
     })
 
@@ -183,8 +181,8 @@ export default defineComponent({
               date={calendarState.currentDate + index * dateOffset.value}
               type={calendarState.currentType}
               bound={bound.value}
-              selectable={selectable}
-              maxRange={maxRange}
+              selectable={selectable.value}
+              maxRange={maxRange.value}
               isSelecting={!calendarState.selectedEnd}
               onCellHovered={handleCellHovered}
               onCellSelected={handleCellSelect}

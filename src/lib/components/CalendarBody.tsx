@@ -33,25 +33,21 @@ export default defineComponent({
       required: true,
     },
     maxRange: {
-      type: Object as PropType<{
-        available: (number | null)[][]
-        unavailable: (number | null)[][]
-      }>,
-      default: () => ({
-        available: [],
-        unavailable: [],
-      }),
-    },
-    selectable: {
       type: Object as PropType<
         | {
-            maxUpper: number | null
-            maxLower: number | null
-            minUpper: number | null
-            minLower: number | null
+            maxUpper: number | undefined
+            maxLower: number | undefined
+            minUpper: number | undefined
+            minLower: number | undefined
           }
         | undefined
       >,
+    },
+    selectable: {
+      type: Object as PropType<{
+        available: [number, number][] | undefined
+        unavailable: [number, number][] | undefined
+      }>,
     },
   },
   emits: ['cellSelected', 'cellHovered'],
@@ -75,6 +71,40 @@ export default defineComponent({
         props.bound.lower < payload &&
         '-interval'
       )
+    }
+
+    const isCellAvailable = (payload: number): '' | '-unavailable' => {
+      if (props.maxRange) {
+        const {
+          maxUpper = Number.POSITIVE_INFINITY,
+          maxLower = Number.NEGATIVE_INFINITY,
+          minUpper = Number.NEGATIVE_INFINITY,
+          minLower = Number.POSITIVE_INFINITY,
+        } = props.maxRange
+        if (
+          payload > maxUpper ||
+          payload < maxLower ||
+          payload < minUpper ||
+          payload > minLower
+        )
+          return '-unavailable'
+      }
+
+      if (
+        props.selectable?.available?.some(
+          ([lower, upper]) => payload >= lower && payload <= upper
+        )
+      )
+        return ''
+
+      if (
+        props.selectable?.unavailable?.some(
+          ([lower, upper]) => payload >= lower && payload <= upper
+        )
+      )
+        return '-unavailable'
+
+      return ''
     }
 
     const settledDate = ref<number | null>(null)
@@ -154,6 +184,7 @@ export default defineComponent({
               settledDate.value === payload && '-settled',
               !props.isSelecting && '-selected',
               isInterval(payload),
+              isCellAvailable(payload),
             ]}
             key={payload}
             payload={payload}>

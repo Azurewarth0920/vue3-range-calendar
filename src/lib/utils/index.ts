@@ -50,3 +50,6 @@ export const calculateSpan = (
 
   return new Date(year, month, day).getTime()
 }
+
+export const trimTime = (date: Date) =>
+  new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime()
