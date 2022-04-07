@@ -10,6 +10,12 @@ export default defineComponent({
   setup() {
     const options = {
       type: 'date',
+      isRange: {
+        maxSpan: {
+          value: 3,
+          unit: 'day',
+        },
+      },
     }
 
     return {

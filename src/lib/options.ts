@@ -1,23 +1,22 @@
-type CalendarType = 'date' | 'week' | 'month' | 'year'
-type Span = {
-  unit: CalendarType
+export type Span = {
+  unit: 'day' | 'week' | 'month' | 'year'
   value: number
 }
 
 export type Options = {
-  startDate?: Date | number | string
-  isRange:
+  startDate?: Date | string
+  endDate?: Date | null
+  isRange?:
     | {
-        endDate?: string | Date | null
-        minDate?: string | Date | null
-        maxDate?: string | Date | null
         minSpan?: Span
         maxSpan?: Span
       }
-    | boolean
+    | false
+  available?: [{ from?: Date; to?: Date }]
+  unavailable?: [{ from?: Date; to?: Date }]
   count: number
   locale: string
-  type: CalendarType
+  type: 'date' | 'week' | 'month' | 'year'
 }
 
 export const defaults = {

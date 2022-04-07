@@ -32,6 +32,27 @@ export default defineComponent({
       type: Boolean,
       required: true,
     },
+    maxRange: {
+      type: Object as PropType<{
+        available: (number | null)[][]
+        unavailable: (number | null)[][]
+      }>,
+      default: () => ({
+        available: [],
+        unavailable: [],
+      }),
+    },
+    selectable: {
+      type: Object as PropType<
+        | {
+            maxUpper: number | null
+            maxLower: number | null
+            minUpper: number | null
+            minLower: number | null
+          }
+        | undefined
+      >,
+    },
   },
   emits: ['cellSelected', 'cellHovered'],
   setup(props, { emit }) {

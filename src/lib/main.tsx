@@ -2,7 +2,12 @@ import { computed, defineComponent, PropType, reactive } from 'vue'
 import CalendarBody from './components/CalendarBody'
 import CalendarHeader from './components/CalendarHeader'
 import { defaults, Options } from './options'
-import { payloadToDate, serializeDate } from './utils'
+import {
+  calculateSpan,
+  dateToNumber,
+  payloadToDate,
+  serializeDate,
+} from './utils'
 import { CELLS_IN_BLOCK, MONTH_A_YEAR } from './constants'
 
 export default defineComponent({
@@ -71,6 +76,40 @@ export default defineComponent({
       }
     })
 
+    const selectable = computed(() => {
+      return {
+        available: props.options.available?.map(({ from, to }) => [
+          from ? dateToNumber(from) : null,
+        ]),
+        unavailable: props.options.unavailable?.map(({ from, to }) => [
+          from ? dateToNumber(from) : null,
+        ]),
+      }
+    })
+
+    const maxRange = computed(() => {
+      const start = calendarState.selectedStart
+
+      if (!start || !props.options.isRange) {
+        return
+      }
+
+      return {
+        maxUpper: props.options.isRange.maxSpan
+          ? calculateSpan(start, props.options.isRange.maxSpan)
+          : null,
+        maxLower: props.options.isRange.maxSpan
+          ? calculateSpan(start, props.options.isRange.maxSpan, -1)
+          : null,
+        minUpper: props.options.isRange.minSpan
+          ? calculateSpan(start, props.options.isRange.minSpan)
+          : null,
+        minLower: props.options.isRange.minSpan
+          ? calculateSpan(start, props.options.isRange.minSpan, -1)
+          : null,
+      }
+    })
+
     const handleSwitchType = () => {
       calendarState.currentType =
         calendarState.currentType === 'month' ? 'year' : 'month'
@@ -84,7 +123,9 @@ export default defineComponent({
     const handleCellSelect = (payload: number) => {
       // Switch type
       if (calendarState.currentType !== options.type) {
-        calendarState.currentDate = payload
+        calendarState.currentDate =
+          payloadToDate(payload).getFullYear() * MONTH_A_YEAR +
+          payloadToDate(payload).getMonth()
 
         switch (calendarState.currentType) {
           case 'year':
@@ -98,7 +139,8 @@ export default defineComponent({
 
       // Select value
       if (!options.isRange) {
-        calendarState.selectedStart = calendarState.s = payload
+        calendarState.selectedStart = calendarState.selectedEnd = payload
+        // To refactor -> real reactivity
         emit('update:select', payloadToDate(payload))
         return
       }
@@ -106,6 +148,7 @@ export default defineComponent({
       if (calendarState.selectedStart && calendarState.selectedEnd) {
         calendarState.selectedStart = payload
         calendarState.selectedEnd = null
+        // To refactor -> real reactivity
         emit('update:start', payloadToDate(payload))
         emit('update:end', null)
         return
@@ -113,6 +156,7 @@ export default defineComponent({
 
       if (calendarState.selectedStart == null) {
         calendarState.selectedStart = payload
+        // To refactor -> real reactivity
         emit('update:start', payloadToDate(payload))
       } else {
         calendarState.selectedEnd = payload
@@ -137,6 +181,8 @@ export default defineComponent({
               date={calendarState.currentDate + index * dateOffset.value}
               type={calendarState.currentType}
               bound={bound.value}
+              selectable={selectable}
+              maxRange={maxRange}
               isSelecting={!calendarState.selectedEnd}
               onCellHovered={handleCellHovered}
               onCellSelected={handleCellSelect}
