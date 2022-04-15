@@ -1,15 +1,21 @@
 <template>
-  <daterange-picker :options="options" />
+  <button ref="button" @click="activated = !activated">button</button>
+  <daterange-picker :options="options" v-if="activated" />
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, ref } from 'vue'
 
 export default defineComponent({
   name: 'App',
   setup() {
+    const activated = ref(false)
+    const button = ref<HTMLElement | null>(null)
+
     const options = {
       type: 'date',
+      attachDirection: 'bottom',
+      attachElement: button,
       isRange: {
         maxSpan: {
           value: 3,
@@ -20,6 +26,8 @@ export default defineComponent({
 
     return {
       options,
+      button,
+      activated,
     }
   },
 })

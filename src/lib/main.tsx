@@ -1,9 +1,17 @@
-import { computed, defineComponent, PropType, reactive } from 'vue'
+import {
+  computed,
+  defineComponent,
+  onMounted,
+  PropType,
+  reactive,
+  ref,
+} from 'vue'
 import CalendarBody from './components/CalendarBody'
 import CalendarHeader from './components/CalendarHeader'
 import { defaults, Options } from './options'
 import { calculateSpan, payloadToDate, serializeDate, trimTime } from './utils'
 import { CELLS_IN_BLOCK, MONTH_A_YEAR } from './constants'
+import { useElementPosition } from './hooks/useElementPosition'
 
 export default defineComponent({
   props: {
@@ -32,6 +40,8 @@ export default defineComponent({
       ...props.options,
     }
 
+    const calendarRef = ref<HTMLDivElement | null>(null)
+
     const calendarState = reactive({
       selectedStart: null as number | null,
       hovered: null as number | null,
@@ -46,6 +56,20 @@ export default defineComponent({
         : calendarState.currentType === 'month'
         ? MONTH_A_YEAR
         : 1
+    })
+
+    const attachedStyles = ref<{ [key: string]: unknown }>({})
+
+    onMounted(() => {
+      if (!options.attachElement || !calendarRef.value) return
+      attachedStyles.value = {
+        ...useElementPosition(
+          options.attachElement.value,
+          calendarRef.value,
+          options.attachDirection
+        ),
+        visibility: 'visible',
+      }
     })
 
     const handleSwitch = (direction: 1 | -1 = 1) => {
@@ -165,7 +189,10 @@ export default defineComponent({
     }
 
     return () => (
-      <div class="calendar-wrapper">
+      <div
+        class={['calendar-wrapper', options.attachElement && '-attached']}
+        style={attachedStyles.value}
+        ref={calendarRef}>
         {[...Array(options.count)].map((_, index) => (
           <div class="calendar-unit">
             <CalendarHeader

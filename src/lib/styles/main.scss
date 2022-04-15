@@ -16,5 +16,10 @@
 
   &-wrapper {
     display: flex;
+
+    &.-attached {
+      position: fixed;
+      visibility: hidden;
+    }
   }
 }
