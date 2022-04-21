@@ -8,6 +8,7 @@ import {
 } from 'vue'
 import CalendarBody from './components/CalendarBody'
 import CalendarHeader from './components/CalendarHeader'
+import CalendarFooter from './components/CalendarFooter'
 import { defaults, Options } from './options'
 import { calculateSpan, payloadToDate, serializeDate, trimTime } from './utils'
 import { CELLS_IN_BLOCK, MONTH_A_YEAR } from './constants'
@@ -32,7 +33,7 @@ export default defineComponent({
       default: () => {},
     },
   },
-  emits: ['update:select', 'update:start', 'update:end'],
+  emits: ['update:select', 'update:start', 'update:end', 'apply', 'cancel'],
 
   setup(props, { emit }) {
     const options = {
@@ -188,6 +189,34 @@ export default defineComponent({
       }
     }
 
+    const isSelected = computed(() => {
+      return !!(options.isRange
+        ? calendarState.selectedStart && calendarState.selectedEnd
+        : calendarState.selectedStart)
+    })
+
+    const handleApply = () => {
+      const payload = options.isRange
+        ? {
+            start: calendarState.selectedStart
+              ? payloadToDate(calendarState.selectedStart)
+              : null,
+            end: calendarState.selectedEnd
+              ? payloadToDate(calendarState.selectedEnd)
+              : null,
+          }
+        : {
+            select: calendarState.selectedEnd
+              ? payloadToDate(calendarState.selectedEnd)
+              : null,
+          }
+      emit('apply', payload)
+    }
+
+    const handleCancel = () => {
+      emit('cancel')
+    }
+
     return () => (
       <div
         class={['calendar-wrapper', options.attachElement && '-attached']}
@@ -214,6 +243,21 @@ export default defineComponent({
               onCellHovered={handleCellHovered}
               onCellSelected={handleCellSelect}
             />
+            {index === options.count - 1 && options.passive && (
+              <CalendarFooter
+                onApply={handleApply}
+                onCancel={handleCancel}
+                isSelected={isSelected.value}
+                applyText={
+                  typeof options.passive !== 'boolean' &&
+                  options.passive.applyText
+                }
+                cancelText={
+                  typeof options.passive !== 'boolean' &&
+                  options.passive.applyText
+                }
+              />
+            )}
           </div>
         ))}
       </div>

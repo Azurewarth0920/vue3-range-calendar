@@ -18,6 +18,7 @@ export type Options = {
     | false
   available?: [{ from?: Date; to?: Date }]
   unavailable?: [{ from?: Date; to?: Date }]
+  passive?: true | { applyText?: string; cancelText?: string }
   count: number
   locale: string
   type: 'date' | 'week' | 'month' | 'year'
@@ -27,6 +28,7 @@ export const defaults = {
   startDate: new Date(),
   attachDirection: 'bottom',
   isRange: null,
+  passive: false,
   count: 2,
   locale: 'en',
   type: 'date',
