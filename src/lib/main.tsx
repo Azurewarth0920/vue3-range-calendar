@@ -16,7 +16,7 @@ import { useElementPosition } from './hooks/useElementPosition'
 
 export default defineComponent({
   props: {
-    selected: {
+    select: {
       type: Object as PropType<Date>,
       default: null,
     },
@@ -41,14 +41,57 @@ export default defineComponent({
       ...props.options,
     }
 
-    const calendarRef = ref<HTMLDivElement | null>(null)
-
     const calendarState = reactive({
-      selectedStart: null as number | null,
+      passiveStart:
+        (options.isRange ? props.start?.getTime() : props.select?.getTime()) ||
+        (null as number | null),
+      passiveEnd:
+        (options.isRange ? props.start?.getTime() : props.select?.getTime()) ||
+        (null as number | null),
       hovered: null as number | null,
-      selectedEnd: null as number | null,
       currentDate: serializeDate(options.startDate),
       currentType: options.type,
+    })
+
+    const calendarRef = ref<HTMLDivElement | null>(null)
+
+    const start = computed<number | null>({
+      get: () => {
+        if (options.passive) {
+          return calendarState.passiveStart
+        }
+        return options.isRange
+          ? props.start?.getTime() ?? null
+          : props.select?.getTime() ?? null
+      },
+      set: (time: number | null) => {
+        if (options.passive) {
+          calendarState.passiveStart = time
+          return
+        }
+
+        if (options.isRange) {
+          emit('update:start', time ? payloadToDate(time) : null)
+        } else {
+          emit('update:select', time ? payloadToDate(time) : null)
+        }
+      },
+    })
+
+    const end = computed<number | null>({
+      get: () => {
+        if (options.passive) {
+          return calendarState.passiveEnd
+        }
+        return props.end?.getTime() ?? null
+      },
+      set: (time: number | null) => {
+        if (options.passive) {
+          calendarState.passiveEnd = time
+        }
+
+        emit('update:end', time ? payloadToDate(time) : null)
+      },
     })
 
     const dateOffset = computed(() => {
@@ -81,18 +124,18 @@ export default defineComponent({
       upper: number | null
       lower: number | null
     }>(() => {
-      const start = calendarState.selectedStart
-      const end = calendarState.selectedEnd || calendarState.hovered
+      const leftEdge = start.value
+      const rightEdge = end.value || calendarState.hovered
 
-      if (!start || !end)
+      if (!leftEdge || !rightEdge)
         return {
           upper: null,
           lower: null,
         }
 
       return {
-        upper: start > end ? start : end,
-        lower: start > end ? end : start,
+        upper: leftEdge > rightEdge ? leftEdge : rightEdge,
+        lower: leftEdge > rightEdge ? rightEdge : leftEdge,
       }
     })
 
@@ -113,24 +156,22 @@ export default defineComponent({
     })
 
     const maxRange = computed(() => {
-      const start = calendarState.selectedStart
-
-      if (!start || !props.options.isRange) {
+      if (!start.value || !props.options.isRange) {
         return
       }
 
       return {
         maxUpper: props.options.isRange.maxSpan
-          ? calculateSpan(start, props.options.isRange.maxSpan)
+          ? calculateSpan(start.value, props.options.isRange.maxSpan)
           : undefined,
         maxLower: props.options.isRange.maxSpan
-          ? calculateSpan(start, props.options.isRange.maxSpan, -1)
+          ? calculateSpan(start.value, props.options.isRange.maxSpan, -1)
           : undefined,
         minUpper: props.options.isRange.minSpan
-          ? calculateSpan(start, props.options.isRange.minSpan)
+          ? calculateSpan(start.value, props.options.isRange.minSpan)
           : undefined,
         minLower: props.options.isRange.minSpan
-          ? calculateSpan(start, props.options.isRange.minSpan, -1)
+          ? calculateSpan(start.value, props.options.isRange.minSpan, -1)
           : undefined,
       }
     })
@@ -146,6 +187,8 @@ export default defineComponent({
     }
 
     const handleCellSelect = (payload: number) => {
+      console.log(payload)
+
       // Switch type
       if (calendarState.currentType !== options.type) {
         calendarState.currentDate =
@@ -164,51 +207,35 @@ export default defineComponent({
 
       // Select value
       if (!options.isRange) {
-        calendarState.selectedStart = calendarState.selectedEnd = payload
-        // To refactor -> real reactivity
-        emit('update:select', payloadToDate(payload))
+        start.value = end.value = payload
         return
       }
 
-      if (calendarState.selectedStart && calendarState.selectedEnd) {
-        calendarState.selectedStart = payload
-        calendarState.selectedEnd = null
-        // To refactor -> real reactivity
-        emit('update:start', payloadToDate(payload))
-        emit('update:end', null)
+      if (start.value && end.value) {
+        start.value = payload
+        end.value = null
         return
       }
 
-      if (calendarState.selectedStart == null) {
-        calendarState.selectedStart = payload
-        // To refactor -> real reactivity
-        emit('update:start', payloadToDate(payload))
+      if (start.value == null) {
+        start.value = payload
       } else {
-        calendarState.selectedEnd = payload
-        emit('update:end', null)
+        end.value = payload
       }
     }
 
     const isSelected = computed(() => {
-      return !!(options.isRange
-        ? calendarState.selectedStart && calendarState.selectedEnd
-        : calendarState.selectedStart)
+      return !!(options.isRange ? start.value && end.value : start.value)
     })
 
     const handleApply = () => {
       const payload = options.isRange
         ? {
-            start: calendarState.selectedStart
-              ? payloadToDate(calendarState.selectedStart)
-              : null,
-            end: calendarState.selectedEnd
-              ? payloadToDate(calendarState.selectedEnd)
-              : null,
+            start: start.value ? payloadToDate(start.value) : null,
+            end: end.value ? payloadToDate(end.value) : null,
           }
         : {
-            select: calendarState.selectedEnd
-              ? payloadToDate(calendarState.selectedEnd)
-              : null,
+            select: start.value ? payloadToDate(start.value) : null,
           }
       emit('apply', payload)
     }
@@ -239,7 +266,7 @@ export default defineComponent({
               bound={bound.value}
               selectable={selectable.value}
               maxRange={maxRange.value}
-              isSelecting={!calendarState.selectedEnd}
+              isSelecting={!end.value}
               onCellHovered={handleCellHovered}
               onCellSelected={handleCellSelect}
             />
