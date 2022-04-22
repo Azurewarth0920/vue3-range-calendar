@@ -33,7 +33,7 @@ export const getDateCells = (
           day: refTable[
             (lastDayOfLastMonth.getDay() - startingMargin + item + offset) % 7
           ],
-          month: year * MONTH_A_YEAR + month - 1,
+          month: month - 1,
         }
       }
 
@@ -44,7 +44,7 @@ export const getDateCells = (
           day: refTable[
             (item - startingMargin - lastDay.getDate() + offset) % 7
           ],
-          month: year * MONTH_A_YEAR + month + 1,
+          month: month + 1,
         }
       }
 
@@ -54,7 +54,7 @@ export const getDateCells = (
         day: refTable[
           (firstDay.getDay() + item - startingMargin - 1 + offset) % 7
         ],
-        month: year * MONTH_A_YEAR + month,
+        month: month,
       }
     })
 }
