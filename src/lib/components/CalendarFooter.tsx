@@ -17,10 +17,15 @@ export default defineComponent({
   setup(props, { emit }) {
     return () => (
       <div class="calendar-footer">
-        <button onClick={() => emit('cancel')}>
+        <button
+          class="calendar-footer_button -cancel"
+          onClick={() => emit('cancel')}>
           {props.cancelText || 'Cancel'}
         </button>
-        <button onClick={() => emit('apply')} disabled={!props.isSelected}>
+        <button
+          class="calendar-footer_button -apply"
+          onClick={() => emit('apply')}
+          disabled={!props.isSelected}>
           {props.applyText || 'Apply'}
         </button>
       </div>

@@ -187,8 +187,6 @@ export default defineComponent({
     }
 
     const handleCellSelect = (payload: number) => {
-      console.log(payload)
-
       // Switch type
       if (calendarState.currentType !== options.type) {
         calendarState.currentDate =

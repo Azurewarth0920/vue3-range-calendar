@@ -48,7 +48,6 @@ export const useElementPosition = (
 
     case 'left':
       const leftValue = left + scrollLeft - calendarWidth - interval
-      console.log(leftValue)
       return {
         left: leftValue > 0 ? toAdjustedLeft(leftValue) : defaultLeftValue,
         top: toAdjustedTop(scrollTop + top),

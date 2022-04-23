@@ -1,8 +1,9 @@
 @charset "utf-8";
 
-@import 'header';
-@import 'body';
-@import 'cell';
+@import './components/_header';
+@import './components/_body';
+@import './components/_cell';
+@import './components/_footer';
 
 .calendar {
   &-unit {

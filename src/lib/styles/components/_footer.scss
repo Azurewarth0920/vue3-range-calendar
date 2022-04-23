@@ -1,0 +1,23 @@
+.calendar-footer {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+
+  &_button {
+    font-size: 14px;
+    border: none;
+    border-radius: 4px;
+    padding: 4px 10px;
+    cursor: pointer;
+
+    & + & {
+      margin-left: 5px;
+    }
+
+    &.-apply {
+      color: #fff;
+      background-color: #2aa9fd;
+    }
+  }
+  
+}
