@@ -13,6 +13,7 @@ import { defaults, Options } from './options'
 import { calculateSpan, payloadToDate, serializeDate, trimTime } from './utils'
 import { CELLS_IN_BLOCK, MONTH_A_YEAR } from './constants'
 import { useElementPosition } from './hooks/useElementPosition'
+import TimePicker from './components/TimePicker'
 
 export default defineComponent({
   props: {
@@ -28,13 +29,16 @@ export default defineComponent({
       type: Object as PropType<Date>,
       default: null,
     },
+    timePicker: {
+      type: Boolean,
+      default: true,
+    },
     options: {
       type: Object as PropType<Options>,
       default: () => {},
     },
   },
   emits: ['update:select', 'update:start', 'update:end', 'apply', 'cancel'],
-
   setup(props, { emit }) {
     const options = {
       ...defaults,
@@ -48,6 +52,8 @@ export default defineComponent({
       passiveEnd:
         (options.isRange ? props.start?.getTime() : props.select?.getTime()) ||
         (null as number | null),
+      passiveTimeFrom: '00:00',
+      passiveTimeTo: '00:00',
       hovered: null as number | null,
       currentDate: serializeDate(options.startDate),
       currentType: options.type,
@@ -268,6 +274,13 @@ export default defineComponent({
               onCellHovered={handleCellHovered}
               onCellSelected={handleCellSelect}
             />
+            {index === options.count - 1 && props.timePicker && (
+              <TimePicker
+                isSameDay={start.value === end.value}
+                v-model:from={calendarState.passiveTimeFrom}
+                v-model:to={calendarState.passiveTimeTo}
+              />
+            )}
             {index === options.count - 1 && options.passive && (
               <CalendarFooter
                 onApply={handleApply}
