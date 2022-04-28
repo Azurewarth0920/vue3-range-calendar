@@ -11,9 +11,10 @@ import CalendarHeader from './components/CalendarHeader'
 import CalendarFooter from './components/CalendarFooter'
 import { defaults, Options } from './options'
 import { calculateSpan, payloadToDate, serializeDate, trimTime } from './utils'
-import { CELLS_IN_BLOCK, MONTH_A_YEAR } from './constants'
+import { CELLS_IN_BLOCK, MINUTES_AN_HOUR, MONTH_A_YEAR } from './constants'
 import { useElementPosition } from './hooks/useElementPosition'
-import TimePicker from './components/TimePicker'
+import TimePickerFrom from './components/TimePickerFrom'
+import TimePickerTo from './components/TimePickerTo'
 
 export default defineComponent({
   props: {
@@ -28,10 +29,6 @@ export default defineComponent({
     end: {
       type: Object as PropType<Date>,
       default: null,
-    },
-    timePicker: {
-      type: Boolean,
-      default: true,
     },
     options: {
       type: Object as PropType<Options>,
@@ -52,8 +49,8 @@ export default defineComponent({
       passiveEnd:
         (options.isRange ? props.start?.getTime() : props.select?.getTime()) ||
         (null as number | null),
-      passiveTimeFrom: '00:00',
-      passiveTimeTo: '00:00',
+      passiveTimeFrom: '-:-',
+      passiveTimeTo: '-:-',
       hovered: null as number | null,
       currentDate: serializeDate(options.startDate),
       currentType: options.type,
@@ -232,6 +229,8 @@ export default defineComponent({
       return !!(options.isRange ? start.value && end.value : start.value)
     })
 
+    const isSameDay = computed(() => !!start.value && start.value === end.value)
+
     const handleApply = () => {
       const payload = options.isRange
         ? {
@@ -274,13 +273,26 @@ export default defineComponent({
               onCellHovered={handleCellHovered}
               onCellSelected={handleCellSelect}
             />
-            {index === options.count - 1 && props.timePicker && (
-              <TimePicker
-                isSameDay={start.value === end.value}
-                v-model:from={calendarState.passiveTimeFrom}
-                v-model:to={calendarState.passiveTimeTo}
+            {index === 0 && options.time && (
+              <TimePickerFrom
+                tick={options.time?.tick}
+                span={options.time?.span}
+                isRange={options.time.isRange}
+                isSameDay={isSameDay.value}
+                v-model={calendarState.passiveTimeFrom}
               />
             )}
+            {index === options.count - 1 &&
+              options.time &&
+              options.time.isRange && (
+                <TimePickerTo
+                  tick={options.time?.tick}
+                  span={options.time?.span?.to}
+                  isSameDay={isSameDay.value}
+                  from={calendarState.passiveTimeFrom}
+                  v-model={calendarState.passiveTimeTo}
+                />
+              )}
             {index === options.count - 1 && options.passive && (
               <CalendarFooter
                 onApply={handleApply}

@@ -19,6 +19,20 @@ export type Options = {
   available?: [{ from?: Date; to?: Date }]
   unavailable?: [{ from?: Date; to?: Date }]
   passive?: true | { applyText?: string; cancelText?: string }
+  time?: {
+    tick: number
+    isRange: boolean
+    span: {
+      from?: {
+        hour?: number
+        minute?: number
+      }
+      to?: {
+        hour: number
+        minute: number
+      }
+    }
+  }
   count: number
   locale: string
   type: 'date' | 'week' | 'month' | 'year'

@@ -53,3 +53,5 @@ export const calculateSpan = (
 
 export const trimTime = (date: Date) =>
   new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime()
+
+export const toPaddingNumber = (num: number) => num.toString().padStart(2, '0')

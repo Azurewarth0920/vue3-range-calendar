@@ -29,6 +29,20 @@ export default defineComponent({
           unit: 'day',
         },
       },
+      time: {
+        tick: 5,
+        span: {
+          from: {
+            hour: 10,
+            minute: 10,
+          },
+          to: {
+            hour: 20,
+            minute: 20,
+          },
+        },
+        isRange: true,
+      },
       passive: true,
     }
 
