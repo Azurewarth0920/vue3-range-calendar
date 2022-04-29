@@ -8,7 +8,7 @@ export type Span = {
 export type Options = {
   startDate?: Date | string
   endDate?: Date | null
-  attachElement?: Ref<HTMLElement>
+  attachElement?: Ref<HTMLElement | null>
   attachDirection: 'top' | 'left' | 'bottom' | 'right'
   isRange?:
     | {
@@ -16,8 +16,8 @@ export type Options = {
         maxSpan?: Span
       }
     | false
-  available?: [{ from?: Date; to?: Date }]
-  unavailable?: [{ from?: Date; to?: Date }]
+  available?: { from?: Date; to?: Date }[]
+  unavailable?: { from?: Date; to?: Date }[]
   passive?: true | { applyText?: string; cancelText?: string }
   time?: {
     tick: number
@@ -33,8 +33,8 @@ export type Options = {
       }
     }
   }
-  count: number
-  locale: string
+  count?: number
+  locale?: string
   type: 'date' | 'week' | 'month' | 'year'
 }
 

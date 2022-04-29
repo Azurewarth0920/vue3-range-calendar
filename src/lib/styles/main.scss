@@ -4,6 +4,7 @@
 @import './components/_body';
 @import './components/_cell';
 @import './components/_footer';
+@import './components/_time-picker';
 
 .calendar {
   &-unit {
@@ -13,10 +14,17 @@
     & + & {
       margin-left: 10px;
     }
+
+    .-attached & {
+      width: 245px;
+    }
   }
 
   &-wrapper {
     display: flex;
+    padding: 15px;
+    border: 1px solid rgb(239, 239, 239);
+    border-radius: 3px;
 
     &.-attached {
       position: fixed;

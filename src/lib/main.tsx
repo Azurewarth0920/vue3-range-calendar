@@ -108,7 +108,12 @@ export default defineComponent({
     const attachedStyles = ref<{ [key: string]: unknown }>({})
 
     onMounted(() => {
-      if (!options.attachElement || !calendarRef.value) return
+      if (
+        !options.attachElement ||
+        !calendarRef.value ||
+        !options.attachElement.value
+      )
+        return
       attachedStyles.value = {
         ...useElementPosition(
           options.attachElement.value,

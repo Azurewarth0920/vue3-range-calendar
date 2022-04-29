@@ -81,7 +81,7 @@ export default defineComponent({
     const isCellAvailable = (payload: number): '' | '-unavailable' => {
       if (!props.isCurrentType) return ''
 
-      if (props.maxRange) {
+      if (props.maxRange && props.isSelecting) {
         const {
           maxUpper = Number.POSITIVE_INFINITY,
           maxLower = Number.NEGATIVE_INFINITY,
@@ -89,10 +89,9 @@ export default defineComponent({
           minLower = Number.POSITIVE_INFINITY,
         } = props.maxRange
         if (
-          payload > maxUpper ||
-          payload < maxLower ||
-          payload < minUpper ||
-          payload > minLower
+          payload >= maxUpper ||
+          payload <= maxLower ||
+          (payload <= minUpper && payload >= minLower)
         )
           return '-unavailable'
       }
