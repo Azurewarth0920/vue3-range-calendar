@@ -58,8 +58,8 @@ export default defineComponent({
     )
 
     return () => (
-      <div>
-        <select v-model={hour.value}>
+      <div class="time-picker">
+        <select v-model={hour.value} class="time-picker_select">
           <option disabled value="-">
             -
           </option>
@@ -67,8 +67,8 @@ export default defineComponent({
             <option value={hour}>{hour}</option>
           ))}
         </select>
-        <span>:</span>
-        <select v-model={minute.value}>
+        <span class="time-picker_separate">:</span>
+        <select v-model={minute.value} class="time-picker_select">
           <option disabled value="-">
             -
           </option>

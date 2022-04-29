@@ -43,6 +43,10 @@ export default defineComponent({
         | undefined
       >,
     },
+    isCurrentType: {
+      type: Boolean,
+      required: true,
+    },
     selectable: {
       type: Object as PropType<{
         available: [number, number][] | undefined
@@ -64,7 +68,8 @@ export default defineComponent({
     }
 
     const isInterval = (payload: number): string | false => {
-      if (!props.bound.upper || !props.bound.lower) return false
+      if (!props.bound.upper || !props.bound.lower || !props.isCurrentType)
+        return false
 
       return (
         props.bound.upper > payload &&
@@ -74,6 +79,8 @@ export default defineComponent({
     }
 
     const isCellAvailable = (payload: number): '' | '-unavailable' => {
+      if (!props.isCurrentType) return ''
+
       if (props.maxRange) {
         const {
           maxUpper = Number.POSITIVE_INFINITY,

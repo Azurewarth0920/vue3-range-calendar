@@ -270,6 +270,7 @@ export default defineComponent({
               selectable={selectable.value}
               maxRange={maxRange.value}
               isSelecting={!end.value}
+              isCurrentType={calendarState.currentType === options.type}
               onCellHovered={handleCellHovered}
               onCellSelected={handleCellSelect}
             />
