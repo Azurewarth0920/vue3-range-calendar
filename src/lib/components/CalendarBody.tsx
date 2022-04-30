@@ -9,7 +9,7 @@ import {
   getYearCells,
   getWeekHeader,
 } from '../cells'
-import { deserializeDate } from '../utils'
+import { deserializeDate, trimTime } from '../utils'
 
 export default defineComponent({
   props: {
@@ -56,6 +56,8 @@ export default defineComponent({
   },
   emits: ['cellSelected', 'cellHovered'],
   setup(props, { emit }) {
+    const today = trimTime(new Date())
+
     const handleMouseEvent = (
       event: MouseEvent,
       eventName: 'cellSelected' | 'cellHovered'
@@ -144,11 +146,18 @@ export default defineComponent({
       switch (props.type) {
         case 'date':
           return (cells.value as ReturnType<typeof getDateCells>).map(
-            ({ date, position, day, month }) => ({
-              classNames: [`-${position}`, `-${day}`],
-              payload: new Date(year, month - 1, date).getTime(),
-              formatter: date.toString(),
-            })
+            ({ date, position, day, month }) => {
+              const payload = new Date(year, month - 1, date).getTime()
+              return {
+                classNames: [
+                  `-${position}`,
+                  `-${day}`,
+                  today === payload && '-today',
+                ],
+                payload,
+                formatter: date.toString(),
+              }
+            }
           )
         case 'week':
           return (cells.value as ReturnType<typeof getWeekCells>).map(days => ({

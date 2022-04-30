@@ -10,7 +10,13 @@ import CalendarBody from './components/CalendarBody'
 import CalendarHeader from './components/CalendarHeader'
 import CalendarFooter from './components/CalendarFooter'
 import { defaults, Options } from './options'
-import { calculateSpan, payloadToDate, serializeDate, trimTime } from './utils'
+import {
+  calculateSpan,
+  payloadToDate,
+  serializeDate,
+  toPaddingNumber,
+  trimTime,
+} from './utils'
 import { CELLS_IN_BLOCK, MINUTES_AN_HOUR, MONTH_A_YEAR } from './constants'
 import { useElementPosition } from './hooks/useElementPosition'
 import TimePickerFrom from './components/TimePickerFrom'
@@ -49,8 +55,6 @@ export default defineComponent({
       passiveEnd:
         (options.isRange ? props.start?.getTime() : props.select?.getTime()) ||
         (null as number | null),
-      passiveTimeFrom: '-:-',
-      passiveTimeTo: '-:-',
       hovered: null as number | null,
       currentDate: serializeDate(options.startDate),
       currentType: options.type,
@@ -94,6 +98,42 @@ export default defineComponent({
         }
 
         emit('update:end', time ? payloadToDate(time) : null)
+      },
+    })
+
+    const timeStart = computed({
+      get: () => {
+        if (!start.value) return '-:-'
+        const date = new Date(start.value)
+        return `${toPaddingNumber(date.getHours())}:${toPaddingNumber(
+          date.getMinutes()
+        )}`
+      },
+      set: (value: string) => {
+        const [hour, minute] = value
+          .split(':')
+          .map(item => parseInt(item || '0', 10))
+        start.value = start.value
+          ? trimTime(new Date(start.value), hour || 0, minute || 0)
+          : null
+      },
+    })
+
+    const timeEnd = computed({
+      get: () => {
+        if (!end.value) return '-:-'
+        const date = new Date(end.value)
+        return `${toPaddingNumber(date.getHours())}:${toPaddingNumber(
+          date.getMinutes()
+        )}`
+      },
+      set: (value: string) => {
+        const [hour, minute] = value
+          .split(':')
+          .map(item => parseInt(item || '0', 10))
+        end.value = end.value
+          ? trimTime(new Date(end.value), hour || 0, minute || 0)
+          : null
       },
     })
 
@@ -279,24 +319,27 @@ export default defineComponent({
               onCellHovered={handleCellHovered}
               onCellSelected={handleCellSelect}
             />
-            {index === 0 && options.time && (
-              <TimePickerFrom
-                tick={options.time?.tick}
-                span={options.time?.span}
-                isRange={options.time.isRange}
-                isSameDay={isSameDay.value}
-                v-model={calendarState.passiveTimeFrom}
-              />
-            )}
+            {index === 0 &&
+              options.time &&
+              ['week', 'date'].includes(calendarState.currentType) && (
+                <TimePickerFrom
+                  tick={options.time?.tick}
+                  span={options.time?.span}
+                  isRange={options.time.isRange}
+                  isSameDay={isSameDay.value}
+                  v-model={timeStart.value}
+                />
+              )}
             {index === options.count - 1 &&
               options.time &&
-              options.time.isRange && (
+              options.time.isRange &&
+              ['week', 'date'].includes(calendarState.currentType) && (
                 <TimePickerTo
                   tick={options.time?.tick}
                   span={options.time?.span?.to}
                   isSameDay={isSameDay.value}
-                  from={calendarState.passiveTimeFrom}
-                  v-model={calendarState.passiveTimeTo}
+                  from={timeStart.value}
+                  v-model={timeEnd.value}
                 />
               )}
             {index === options.count - 1 && options.passive && (
