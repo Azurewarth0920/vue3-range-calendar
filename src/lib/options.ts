@@ -1,4 +1,5 @@
 import { Ref } from 'vue'
+import { DateFormatterArgs, WeekFormatterArgs } from './cells'
 
 export type Span = {
   unit: 'day' | 'week' | 'month' | 'year'
@@ -36,6 +37,12 @@ export type Options = {
   count?: number
   locale?: string
   type: 'date' | 'week' | 'month' | 'year'
+  formatters?: {
+    date?: (payload: DateFormatterArgs) => string
+    week?: (payload: WeekFormatterArgs) => string
+    month?: (payload: { month: number; year: number }) => string
+    year?: (payload: { year: number }) => string
+  }
 }
 
 export const defaults = {

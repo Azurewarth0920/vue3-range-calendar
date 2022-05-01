@@ -8,6 +8,7 @@ import {
   getMonthCells,
   getYearCells,
   getWeekHeader,
+  defaultFormatters,
 } from '../cells'
 import { deserializeDate, trimTime } from '../utils'
 
@@ -16,6 +17,17 @@ export default defineComponent({
     date: {
       type: Number,
       required: true,
+    },
+    maxRange: {
+      type: Object as PropType<
+        | {
+            maxUpper: number | undefined
+            maxLower: number | undefined
+            minUpper: number | undefined
+            minLower: number | undefined
+          }
+        | undefined
+      >,
     },
     type: {
       type: String as PropType<Options['type']>,
@@ -32,20 +44,13 @@ export default defineComponent({
       type: Boolean,
       required: true,
     },
-    maxRange: {
-      type: Object as PropType<
-        | {
-            maxUpper: number | undefined
-            maxLower: number | undefined
-            minUpper: number | undefined
-            minLower: number | undefined
-          }
-        | undefined
-      >,
-    },
     isCurrentType: {
       type: Boolean,
       required: true,
+    },
+    formatters: {
+      type: Object as PropType<Options['formatters']>,
+      default: null,
     },
     selectable: {
       type: Object as PropType<{
@@ -57,6 +62,9 @@ export default defineComponent({
   emits: ['cellSelected', 'cellHovered'],
   setup(props, { emit }) {
     const today = trimTime(new Date())
+    const formatters = props.formatters
+      ? { ...defaultFormatters, ...props.formatters }
+      : defaultFormatters
 
     const handleMouseEvent = (
       event: MouseEvent,
@@ -155,26 +163,39 @@ export default defineComponent({
                   today === payload && '-today',
                 ],
                 payload,
-                formatter: date.toString(),
+                formatter: formatters.date({
+                  date,
+                  position,
+                  day,
+                  month,
+                  year,
+                }),
               }
             }
           )
         case 'week':
-          return (cells.value as ReturnType<typeof getWeekCells>).map(days => ({
-            payload: new Date(year, month - 1, days[0]).getTime(),
-            formatter: days.toString(),
-          }))
+          return (cells.value as ReturnType<typeof getWeekCells>).map(
+            (days, index) => ({
+              payload: new Date(year, month - 1, days[0]).getTime(),
+              formatter: formatters.week({
+                days,
+                index: index + 1,
+                month,
+                year,
+              }),
+            })
+          )
         case 'month':
           return (cells.value as ReturnType<typeof getMonthCells>).map(
             month => ({
               payload: new Date(year, month - 1, 1).getTime(),
-              formatter: month.toString(),
+              formatter: formatters.month({ year, month }),
             })
           )
         case 'year':
           return (cells.value as ReturnType<typeof getYearCells>).map(year => ({
             payload: new Date(year, 0, 1).getTime(),
-            formatter: year.toString(),
+            formatter: formatters.year({ year }),
           }))
       }
     })

@@ -96,6 +96,44 @@ export const getMonthCells = () => [...Array(12)].map((_, key) => key + 1)
 export const getYearCells = ({ year }: { year: number }) =>
   [...Array(12)].map((_, key) => key + year - ((year - 1970) % 12))
 
+export type DateFormatterArgs = {
+  date: number
+  month: number
+  year: number
+  position: string
+  day: string
+}
+
+export type WeekFormatterArgs = {
+  month: number
+  year: number
+  days: number[]
+  index: number
+}
+
+export type MonthFormatterArgs = { month: number; year: number }
+
+export type YearFormatterArgs = { year: number }
+
+export const defaultDateFormatter = ({ day }: DateFormatterArgs) =>
+  day.toString()
+
+export const defaultWeekFormatter = ({ days, index }: WeekFormatterArgs) =>
+  `${index}W(${days[0]}~${days[days.length - 1]})`
+
+export const defaultMonthFormatter = ({ month }: MonthFormatterArgs) =>
+  month.toString()
+
+export const defaultYearFormatter = ({ year }: YearFormatterArgs) =>
+  year.toString()
+
+export const defaultFormatters = {
+  date: defaultDateFormatter,
+  week: defaultWeekFormatter,
+  month: defaultMonthFormatter,
+  year: defaultYearFormatter,
+}
+
 export const table = {
   date: getDateCells,
   week: getWeekCells,

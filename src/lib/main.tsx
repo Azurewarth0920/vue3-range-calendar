@@ -312,6 +312,7 @@ export default defineComponent({
               date={calendarState.currentDate + index * dateOffset.value}
               type={calendarState.currentType}
               bound={bound.value}
+              formatters={options.formatters}
               selectable={selectable.value}
               maxRange={maxRange.value}
               isSelecting={!end.value}
