@@ -115,8 +115,8 @@ export type MonthFormatterArgs = { month: number; year: number }
 
 export type YearFormatterArgs = { year: number }
 
-export const defaultDateFormatter = ({ day }: DateFormatterArgs) =>
-  day.toString()
+export const defaultDateFormatter = ({ date }: DateFormatterArgs) =>
+  date.toString()
 
 export const defaultWeekFormatter = ({ days, index }: WeekFormatterArgs) =>
   `${index}W(${days[0]}~${days[days.length - 1]})`

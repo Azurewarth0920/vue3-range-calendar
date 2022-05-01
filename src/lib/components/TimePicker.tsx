@@ -20,12 +20,11 @@ export default defineComponent({
       get: () => {
         const [hour, minute] = props.modelValue.split(':')
         return {
-          hour,
-          minute,
+          hour: props.dataset.hour.includes(hour) ? hour : '-',
+          minute: props.dataset.minute.includes(minute) ? minute : '-',
         }
       },
       set: ({ hour, minute }: { hour: string; minute: string }) => {
-        console.log(hour, minute)
         emit('update:modelValue', `${hour}:${minute}`)
       },
     })

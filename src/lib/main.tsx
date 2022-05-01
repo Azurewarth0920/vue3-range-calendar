@@ -182,8 +182,11 @@ export default defineComponent({
         }
 
       return {
-        upper: leftEdge > rightEdge ? leftEdge : rightEdge,
-        lower: leftEdge > rightEdge ? rightEdge : leftEdge,
+        upper: trimTime(new Date(leftEdge > rightEdge ? leftEdge : rightEdge)),
+        lower: trimTime(
+          new Date(leftEdge > rightEdge ? rightEdge : leftEdge),
+          24
+        ),
       }
     })
 

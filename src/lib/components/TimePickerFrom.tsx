@@ -1,4 +1,4 @@
-import { computed, defineComponent, PropType } from 'vue'
+import { computed, defineComponent, PropType, watch } from 'vue'
 import { MINUTES_AN_HOUR } from '../constants'
 import { toPaddingNumber } from '../utils'
 import TimePicker from './TimePicker'

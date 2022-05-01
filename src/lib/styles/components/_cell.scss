@@ -20,6 +20,20 @@
     border-radius: 10px;
   }
 
+  &.-today {
+    border: 2px solid #3dff98;
+    border-radius: 10px;
+  }
+
+  &.-sat,
+  &.-sun {
+    color: #ff3030;
+  }
+
+  &.-sun {
+    font-weight: bold;
+  }
+
   &.-last,
   &.-next {
     color: #7a7a7a;
