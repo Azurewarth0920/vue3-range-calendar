@@ -183,10 +183,7 @@ export default defineComponent({
 
       return {
         upper: trimTime(new Date(leftEdge > rightEdge ? leftEdge : rightEdge)),
-        lower: trimTime(
-          new Date(leftEdge > rightEdge ? rightEdge : leftEdge),
-          24
-        ),
+        lower: trimTime(new Date(leftEdge > rightEdge ? rightEdge : leftEdge)),
       }
     })
 
@@ -277,7 +274,9 @@ export default defineComponent({
       return !!(options.isRange ? start.value && end.value : start.value)
     })
 
-    const isSameDay = computed(() => !!start.value && start.value === end.value)
+    const isSameDay = computed(
+      () => !!bound.value.upper && bound.value.upper === bound.value.lower
+    )
 
     const handleApply = () => {
       const payload = options.isRange

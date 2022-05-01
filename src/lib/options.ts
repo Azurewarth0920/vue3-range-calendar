@@ -21,9 +21,9 @@ export type Options = {
   unavailable?: { from?: Date; to?: Date }[]
   passive?: true | { applyText?: string; cancelText?: string }
   time?: {
-    tick: number
+    tick?: number
     isRange: boolean
-    span: {
+    span?: {
       from?: {
         hour?: number
         minute?: number
@@ -48,7 +48,7 @@ export type Options = {
 export const defaults = {
   startDate: new Date(),
   attachDirection: 'bottom',
-  isRange: null,
+  isRange: {},
   passive: false,
   count: 2,
   locale: 'en',
