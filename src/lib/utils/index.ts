@@ -1,11 +1,13 @@
 import { MONTH_A_YEAR } from '../constants'
 import { Span } from '../options'
 
-export const serializeDate = (date: number | string | Date) => {
-  const normalizedDate = date instanceof Date ? date : new Date(date)
+export const serializeDate = (date: number | string | Date | null) => {
+  const normalizedDate =
+    date instanceof Date ? date : date ? new Date(date) : new Date()
 
   if (normalizedDate.toString() === 'Invalid Date') {
-    throw new Error('Invalid date format')
+    const today = new Date()
+    return today.getFullYear() * MONTH_A_YEAR + today.getMonth()
   } else {
     return (
       normalizedDate.getFullYear() * MONTH_A_YEAR + normalizedDate.getMonth()
@@ -19,8 +21,6 @@ export const deserializeDate = (date: number) => {
     month: (date % MONTH_A_YEAR) + 1,
   }
 }
-
-export const payloadToDate = (payload: number) => new Date(payload)
 
 export const calculateSpan = (
   payload: number,

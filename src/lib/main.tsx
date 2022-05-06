@@ -12,12 +12,11 @@ import CalendarFooter from './components/CalendarFooter'
 import { defaults, Options } from './options'
 import {
   calculateSpan,
-  payloadToDate,
   serializeDate,
   toPaddingNumber,
   trimTime,
 } from './utils'
-import { CELLS_IN_BLOCK, MINUTES_AN_HOUR, MONTH_A_YEAR } from './constants'
+import { CELLS_IN_BLOCK, MONTH_A_YEAR } from './constants'
 import { useElementPosition } from './hooks/useElementPosition'
 import TimePickerFrom from './components/TimePickerFrom'
 import TimePickerTo from './components/TimePickerTo'
@@ -38,66 +37,72 @@ export default defineComponent({
     },
     options: {
       type: Object as PropType<Options>,
-      default: () => {},
+      default: () => ({}),
     },
   },
   emits: ['update:select', 'update:start', 'update:end', 'apply', 'cancel'],
   setup(props, { emit }) {
-    const options = {
-      ...defaults,
-      ...props.options,
-    }
+    const options = computed(() => {
+      return {
+        ...defaults,
+        ...props.options,
+      }
+    })
 
-    const calendarState = reactive({
+    const internalState = reactive({
       passiveStart:
-        (options.isRange ? props.start?.getTime() : props.select?.getTime()) ||
-        (null as number | null),
+        (options.value.singleSelectMode
+          ? props.select?.getTime()
+          : props.start?.getTime()) || (null as number | null),
       passiveEnd:
-        (options.isRange ? props.start?.getTime() : props.select?.getTime()) ||
-        (null as number | null),
+        (options.value.singleSelectMode
+          ? props.select?.getTime()
+          : props.start?.getTime()) || (null as number | null),
       hovered: null as number | null,
-      currentDate: serializeDate(options.startDate),
-      currentType: options.type,
+      currentDate: serializeDate(
+        options.value.singleSelectMode ? props.select : props.start
+      ),
+      currentType: options.value.type,
     })
 
     const calendarRef = ref<HTMLDivElement | null>(null)
 
     const start = computed<number | null>({
       get: () => {
-        if (options.passive) {
-          return calendarState.passiveStart
+        if (options.value.passive) {
+          return internalState.passiveStart
         }
-        return options.isRange
-          ? props.start?.getTime() ?? null
-          : props.select?.getTime() ?? null
+        return options.value.singleSelectMode
+          ? props.select?.getTime()
+          : props.start?.getTime()
       },
       set: (time: number | null) => {
-        if (options.passive) {
-          calendarState.passiveStart = time
+        if (options.value.passive) {
+          internalState.passiveStart = time
           return
         }
 
-        if (options.isRange) {
-          emit('update:start', time ? payloadToDate(time) : null)
+        if (options.value.singleSelectMode) {
+          emit('update:select', time ? new Date(time) : null)
         } else {
-          emit('update:select', time ? payloadToDate(time) : null)
+          emit('update:start', time ? new Date(time) : null)
         }
       },
     })
 
     const end = computed<number | null>({
       get: () => {
-        if (options.passive) {
-          return calendarState.passiveEnd
+        if (options.value.passive) {
+          return internalState.passiveEnd
         }
         return props.end?.getTime() ?? null
       },
       set: (time: number | null) => {
-        if (options.passive) {
-          calendarState.passiveEnd = time
+        if (options.value.passive) {
+          internalState.passiveEnd = time
         }
 
-        emit('update:end', time ? payloadToDate(time) : null)
+        emit('update:end', time ? new Date(time) : null)
       },
     })
 
@@ -138,9 +143,9 @@ export default defineComponent({
     })
 
     const dateOffset = computed(() => {
-      return calendarState.currentType === 'year'
+      return internalState.currentType === 'year'
         ? MONTH_A_YEAR * CELLS_IN_BLOCK
-        : calendarState.currentType === 'month'
+        : internalState.currentType === 'month'
         ? MONTH_A_YEAR
         : 1
     })
@@ -149,23 +154,24 @@ export default defineComponent({
 
     onMounted(() => {
       if (
-        !options.attachElement ||
+        !options.value.attachElement ||
         !calendarRef.value ||
-        !options.attachElement.value
+        !options.value.attachElement.value
       )
         return
       attachedStyles.value = {
         ...useElementPosition(
-          options.attachElement.value,
+          options.value.attachElement.value,
           calendarRef.value,
-          options.attachDirection
+          options.value.attachDirection
         ),
         visibility: 'visible',
       }
     })
 
     const handleSwitch = (direction: 1 | -1 = 1) => {
-      calendarState.currentDate += dateOffset.value * direction * options.count
+      internalState.currentDate +=
+        dateOffset.value * direction * options.value.count
     }
 
     const bound = computed<{
@@ -173,7 +179,7 @@ export default defineComponent({
       lower: number | null
     }>(() => {
       const leftEdge = start.value
-      const rightEdge = end.value || calendarState.hovered
+      const rightEdge = end.value || internalState.hovered
 
       if (!leftEdge || !rightEdge)
         return {
@@ -192,11 +198,11 @@ export default defineComponent({
       unavailable: [number, number][] | undefined
     }>(() => {
       return {
-        available: props.options.available?.map(({ from, to }) => [
+        available: options.value.available?.map(({ from, to }) => [
           from ? trimTime(from) : Number.POSITIVE_INFINITY,
           to ? trimTime(to) : Number.NEGATIVE_INFINITY,
         ]),
-        unavailable: props.options.unavailable?.map(({ from, to }) => [
+        unavailable: options.value.unavailable?.map(({ from, to }) => [
           from ? trimTime(from) : Number.POSITIVE_INFINITY,
           to ? trimTime(to) : Number.NEGATIVE_INFINITY,
         ]),
@@ -204,55 +210,55 @@ export default defineComponent({
     })
 
     const maxRange = computed(() => {
-      if (!start.value || !props.options.isRange) {
+      if (!start.value || options.value.singleSelectMode) {
         return
       }
 
       return {
-        maxUpper: props.options.isRange.maxSpan
-          ? calculateSpan(start.value, props.options.isRange.maxSpan)
+        maxUpper: options.value.maxSpan
+          ? calculateSpan(start.value, options.value.maxSpan)
           : undefined,
-        maxLower: props.options.isRange.maxSpan
-          ? calculateSpan(start.value, props.options.isRange.maxSpan, -1)
+        maxLower: options.value.maxSpan
+          ? calculateSpan(start.value, options.value.maxSpan, -1)
           : undefined,
-        minUpper: props.options.isRange.minSpan
-          ? calculateSpan(start.value, props.options.isRange.minSpan)
+        minUpper: options.value.minSpan
+          ? calculateSpan(start.value, options.value.minSpan)
           : undefined,
-        minLower: props.options.isRange.minSpan
-          ? calculateSpan(start.value, props.options.isRange.minSpan, -1)
+        minLower: options.value.minSpan
+          ? calculateSpan(start.value, options.value.minSpan, -1)
           : undefined,
       }
     })
 
     const handleSwitchType = () => {
-      calendarState.currentType =
-        calendarState.currentType === 'month' ? 'year' : 'month'
+      internalState.currentType =
+        internalState.currentType === 'month' ? 'year' : 'month'
     }
 
     const handleCellHovered = (payload: number) => {
-      if (!options.isRange) return
-      calendarState.hovered = payload
+      if (options.value.singleSelectMode) return
+      internalState.hovered = payload
     }
 
     const handleCellSelect = (payload: number) => {
       // Switch type
-      if (calendarState.currentType !== options.type) {
-        calendarState.currentDate =
-          payloadToDate(payload).getFullYear() * MONTH_A_YEAR +
-          payloadToDate(payload).getMonth()
+      if (internalState.currentType !== options.value.type) {
+        internalState.currentDate =
+          new Date(payload).getFullYear() * MONTH_A_YEAR +
+          new Date(payload).getMonth()
 
-        switch (calendarState.currentType) {
+        switch (internalState.currentType) {
           case 'year':
-            calendarState.currentType = 'month'
+            internalState.currentType = 'month'
             return
           case 'month':
-            calendarState.currentType = options.type
+            internalState.currentType = options.value.type
             return
         }
       }
 
       // Select value
-      if (!options.isRange) {
+      if (!options.value.singleSelectMode) {
         start.value = end.value = payload
         return
       }
@@ -271,7 +277,9 @@ export default defineComponent({
     }
 
     const isSelected = computed(() => {
-      return !!(options.isRange ? start.value && end.value : start.value)
+      return !!(options.value.singleSelectMode
+        ? start.value && end.value
+        : start.value)
     })
 
     const isSameDay = computed(
@@ -279,84 +287,85 @@ export default defineComponent({
     )
 
     const handleApply = () => {
-      const payload = options.isRange
+      const payload = options.value.singleSelectMode
         ? {
-            start: start.value ? payloadToDate(start.value) : null,
-            end: end.value ? payloadToDate(end.value) : null,
+            start: start.value ? new Date(start.value) : null,
+            end: end.value ? new Date(end.value) : null,
           }
         : {
-            select: start.value ? payloadToDate(start.value) : null,
+            select: start.value ? new Date(start.value) : null,
           }
       emit('apply', payload)
     }
 
-    const handleCancel = () => {
-      emit('cancel')
-    }
+    const isTimeRanged = computed(
+      () =>
+        !options.value.singleSelectMode || !options.value.time?.singleSelectMode
+    )
 
     return () => (
       <div
-        class={['calendar-wrapper', options.attachElement && '-attached']}
+        class={['calendar-wrapper', options.value.attachElement && '-attached']}
         style={attachedStyles.value}
         ref={calendarRef}>
-        {[...Array(options.count)].map((_, index) => (
+        {[...Array(options.value.count)].map((_, index) => (
           <div class="calendar-unit">
             <CalendarHeader
-              date={calendarState.currentDate + index * dateOffset.value}
-              type={calendarState.currentType}
+              date={internalState.currentDate + index * dateOffset.value}
+              type={internalState.currentType}
               showGoPrev={index === 0}
-              showGoNext={index === options.count - 1}
+              showGoNext={index === options.value.count - 1}
               onPrevClicked={() => handleSwitch(-1)}
               onSwitchType={handleSwitchType}
               onNextClicked={handleSwitch}
             />
             <CalendarBody
-              date={calendarState.currentDate + index * dateOffset.value}
-              type={calendarState.currentType}
+              date={internalState.currentDate + index * dateOffset.value}
+              type={internalState.currentType}
               bound={bound.value}
-              formatters={options.formatters}
+              formatters={options.value.formatters}
               selectable={selectable.value}
               maxRange={maxRange.value}
               isSelecting={!end.value}
-              isCurrentType={calendarState.currentType === options.type}
+              isCurrentType={internalState.currentType === options.value.type}
               onCellHovered={handleCellHovered}
               onCellSelected={handleCellSelect}
             />
             {index === 0 &&
-              options.time &&
-              ['week', 'date'].includes(calendarState.currentType) && (
+              options.value.time &&
+              ['week', 'date'].includes(internalState.currentType) && (
                 <TimePickerFrom
-                  tick={options.time?.tick}
-                  span={options.time?.span}
-                  isRange={options.time.isRange}
+                  tick={options.value.time?.tick}
+                  span={options.value.time?.span}
+                  isRange={isTimeRanged.value}
                   isSameDay={isSameDay.value}
                   v-model={timeStart.value}
                 />
               )}
-            {index === options.count - 1 &&
-              options.time &&
-              options.time.isRange &&
-              ['week', 'date'].includes(calendarState.currentType) && (
+            {index === options.value.count - 1 &&
+              options.value.time &&
+              isTimeRanged.value &&
+              ['week', 'date'].includes(internalState.currentType) && (
                 <TimePickerTo
-                  tick={options.time?.tick}
-                  span={options.time?.span?.to}
+                  tick={options.value.time?.tick}
+                  span={options.value.time?.span?.to}
                   isSameDay={isSameDay.value}
                   from={timeStart.value}
                   v-model={timeEnd.value}
                 />
               )}
-            {index === options.count - 1 && options.passive && (
+            {index === options.value.count - 1 && options.value.passive && (
               <CalendarFooter
                 onApply={handleApply}
-                onCancel={handleCancel}
+                onCancel={() => emit('cancel')}
                 isSelected={isSelected.value}
                 applyText={
-                  typeof options.passive !== 'boolean' &&
-                  options.passive.applyText
+                  typeof options.value.passive !== 'boolean' &&
+                  options.value.passive.applyText
                 }
                 cancelText={
-                  typeof options.passive !== 'boolean' &&
-                  options.passive.applyText
+                  typeof options.value.passive !== 'boolean' &&
+                  options.value.passive.applyText
                 }
               />
             )}

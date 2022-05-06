@@ -11,18 +11,14 @@ export type Options = {
   endDate?: Date | null
   attachElement?: Ref<HTMLElement | null>
   attachDirection: 'top' | 'left' | 'bottom' | 'right'
-  isRange?:
-    | {
-        minSpan?: Span
-        maxSpan?: Span
-      }
-    | false
+  minSpan?: Span
+  maxSpan?: Span
   available?: { from?: Date; to?: Date }[]
   unavailable?: { from?: Date; to?: Date }[]
   passive?: true | { applyText?: string; cancelText?: string }
   time?: {
     tick?: number
-    isRange: boolean
+    singleSelectMode: false
     span?: {
       from?: {
         hour?: number
@@ -34,6 +30,7 @@ export type Options = {
       }
     }
   }
+  singleSelectMode?: boolean
   count?: number
   locale?: string
   type: 'date' | 'week' | 'month' | 'year'
@@ -48,9 +45,7 @@ export type Options = {
 export const defaults = {
   startDate: new Date(),
   attachDirection: 'bottom',
-  isRange: {},
-  passive: false,
   count: 2,
   locale: 'en',
   type: 'date',
-}
+} as const
