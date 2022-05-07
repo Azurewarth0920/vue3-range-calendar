@@ -1,6 +1,5 @@
-import { MILLISECOND_A_DAY, MONTH_A_YEAR } from './constants'
+import { MILLISECOND_A_DAY } from './constants'
 
-type WeekStartsFrom = 'mon' | 'sun'
 const refTable: Record<number, string> = {
   0: 'sun',
   1: 'mon',
@@ -19,8 +18,8 @@ export const getDateCells = (
   const lastDay = new Date(year, month, 0)
   const lastDayOfLastMonth = new Date(year, month - 1, 0)
 
-  const startingMargin = firstDay.getDay() - (offset % 7)
-  const endingMargin = (6 - lastDay.getDay() + (offset % 7)) % 7
+  const startingMargin = Math.abs((firstDay.getDay() + offset) % 7)
+  const endingMargin = (7 - ((lastDay.getDate() + startingMargin) % 7)) % 7
   const totalCells = lastDay.getDate() + startingMargin + endingMargin
 
   return [...Array(totalCells)]
@@ -62,7 +61,7 @@ export const getDateCells = (
 export const getWeekHeader = (locale: string = 'en', offset: number = 0) => {
   const FIRST_SUNDAY_TIME = 226800000
   return [...Array(7)]
-    .map((_, index) => (index + offset) % 7)
+    .map((_, index) => Math.abs(index - offset) % 7)
     .map(day => new Date(FIRST_SUNDAY_TIME + MILLISECOND_A_DAY * day))
     .map(date =>
       new Intl.DateTimeFormat(locale, {
@@ -117,6 +116,7 @@ export const defaultFormatters = {
 export const table = {
   date: getDateCells,
   week: getDateCells,
+  fixed: getDateCells,
   month: getMonthCells,
   year: getYearCells,
 }

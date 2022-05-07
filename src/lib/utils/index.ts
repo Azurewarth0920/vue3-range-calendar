@@ -58,7 +58,7 @@ export const calculateWeekSpan = (
   to = 6
 ) => {
   const date = new Date(payload)
-  const dayOffset = (date.getDay() + offset) % 7
+  const dayOffset = Math.abs((date.getDay() + offset) % 7)
 
   return {
     upper: new Date(

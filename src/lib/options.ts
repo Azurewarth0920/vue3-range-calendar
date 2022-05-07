@@ -11,6 +11,7 @@ export type Options = {
   endDate?: Date | null
   attachElement?: Ref<HTMLElement | null>
   attachDirection?: 'top' | 'left' | 'bottom' | 'right'
+  weekOffset?: number
   minSpan?: Span
   maxSpan?: Span
   available?: { from?: Date; to?: Date }[]
@@ -33,7 +34,7 @@ export type Options = {
   singleSelectMode?: boolean
   count?: number
   locale?: string
-  type: 'date' | 'week' | 'month' | 'year'
+  type: 'date' | 'week' | 'month' | 'year' | 'fixed'
   formatters?: {
     date?: (payload: DateFormatterArgs) => string
     week?: (payload: WeekFormatterArgs) => string
@@ -48,4 +49,5 @@ export const defaults = {
   count: 2,
   locale: 'en',
   type: 'date',
+  weekOffset: 1,
 } as const

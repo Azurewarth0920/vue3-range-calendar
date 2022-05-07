@@ -57,6 +57,14 @@ export default defineComponent({
         unavailable: [number, number][] | undefined
       }>,
     },
+    weekOffset: {
+      type: Number,
+      required: true,
+    },
+    locale: {
+      type: String,
+      required: true,
+    },
   },
   emits: ['cellSelected', 'cellHovered'],
   setup(props, { emit }) {
@@ -93,7 +101,10 @@ export default defineComponent({
 
     const isSpanCell = (payload: number): string[] | string | false => {
       if (!hoveringPayload.value || props.type !== 'week') return false
-      const { upper, lower } = calculateWeekSpan(hoveringPayload.value)
+      const { upper, lower } = calculateWeekSpan(
+        hoveringPayload.value,
+        props.weekOffset
+      )
 
       if (upper === payload) return ['-span', '-span_upper']
       if (lower === payload) return ['-span', '-span_lower']
@@ -152,7 +163,16 @@ export default defineComponent({
     })
 
     const cells = computed(() => {
-      return cellTable[props.type](deserializeDate(props.date))
+      switch (props.type) {
+        case 'date':
+        case 'fixed':
+        case 'week':
+          return getDateCells(deserializeDate(props.date), props.weekOffset)
+        case 'month':
+          return getMonthCells()
+        case 'year':
+          return getYearCells(deserializeDate(props.date))
+      }
     })
 
     const cellAttrs = computed<
@@ -166,6 +186,7 @@ export default defineComponent({
       switch (props.type) {
         case 'date':
         case 'week':
+        case 'fixed':
           return (cells.value as ReturnType<typeof getDateCells>).map(
             ({ date, position, day, month }) => {
               const payload = new Date(year, month - 1, date).getTime()
@@ -207,8 +228,8 @@ export default defineComponent({
         onClick={e => handleMouseEvent(e, 'cellSelected')}
         onMouseover={e => handleMouseEvent(e, 'cellHovered')}
         onMouseout={() => (hoveringPayload.value = null)}>
-        {props.type === 'date' &&
-          getWeekHeader().map(shortName => (
+        {['date', 'fixed', 'week'].includes(props.type) &&
+          getWeekHeader(props.locale, props.weekOffset).map(shortName => (
             <span class="calendar-cell_leading">{shortName}</span>
           ))}
         {cellAttrs.value.map(({ payload, classNames, formatter }) => (

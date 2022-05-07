@@ -183,7 +183,7 @@ export default defineComponent({
       const rightEdge = end.value || internalState.hovered
 
       if (rightEdge && options.value.type === 'week')
-        return calculateWeekSpan(rightEdge)
+        return calculateWeekSpan(rightEdge, options.value.weekOffset)
 
       if (!leftEdge || !rightEdge)
         return {
@@ -269,7 +269,10 @@ export default defineComponent({
 
       // Week mode or fixed span mode
       if (options.value.type === 'week') {
-        const { upper, lower } = calculateWeekSpan(payload)
+        const { upper, lower } = calculateWeekSpan(
+          payload,
+          options.value.weekOffset
+        )
         start.value = lower
         end.value = upper
         return
@@ -342,6 +345,8 @@ export default defineComponent({
               isCurrentType={internalState.currentType === options.value.type}
               onCellHovered={handleCellHovered}
               onCellSelected={handleCellSelect}
+              locale={options.value.locale}
+              weekOffset={options.value.weekOffset}
             />
             {index === 0 &&
               options.value.time &&
