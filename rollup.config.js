@@ -17,6 +17,7 @@ export default [
       {
         file: pkg.module,
         format: 'es',
+        sourcemap: true,
         plugins: [terser()],
       },
     ],
@@ -52,7 +53,7 @@ export default [
         outputStyle: 'compressed',
       }),
       typescript({
-        sourceMap: true,
+        sourceMap: false,
       }),
       babel({
         babelHelpers: 'bundled',
@@ -61,6 +62,7 @@ export default [
       }),
       replace({
         'process.env.NODE_ENV': JSON.stringify('production'),
+        preventAssignment: true,
       }),
       resolve(),
     ],
