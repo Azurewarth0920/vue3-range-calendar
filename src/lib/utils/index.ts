@@ -51,6 +51,29 @@ export const calculateSpan = (
   return new Date(year, month, day).getTime()
 }
 
+export const calculateWeekSpan = (
+  payload: number,
+  offset = 0,
+  from = 0,
+  to = 6
+) => {
+  const date = new Date(payload)
+  const dayOffset = (date.getDay() + offset) % 7
+
+  return {
+    upper: new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate() + to - dayOffset
+    ).getTime(),
+    lower: new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate() + from - dayOffset
+    ).getTime(),
+  }
+}
+
 export const trimTime = (date: Date, hour: number = 0, minute = 0) =>
   new Date(
     date.getFullYear(),

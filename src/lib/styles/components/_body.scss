@@ -2,12 +2,9 @@
   display: grid;
   margin-top: 5px;
 
-  &.-date {
-    grid-template-columns: repeat(7, 1fr);
-  }
-
+  &.-date,
   &.-week {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(7, 1fr);
   }
 
   &.-month,

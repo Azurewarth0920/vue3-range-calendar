@@ -17,11 +17,7 @@ export default defineComponent({
     const end = ref<Date | null>(null)
 
     const options: Options = {
-      type: 'date',
-      attachDirection: 'bottom',
-      time: {
-        isRange: true,
-      },
+      type: 'week',
     }
 
     return {

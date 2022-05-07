@@ -10,7 +10,7 @@ export type Options = {
   startDate?: Date | string
   endDate?: Date | null
   attachElement?: Ref<HTMLElement | null>
-  attachDirection: 'top' | 'left' | 'bottom' | 'right'
+  attachDirection?: 'top' | 'left' | 'bottom' | 'right'
   minSpan?: Span
   maxSpan?: Span
   available?: { from?: Date; to?: Date }[]

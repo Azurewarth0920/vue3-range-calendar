@@ -15,7 +15,7 @@
     --button-size: 50px;
   }
 
-  &:hover:not(.-upper):not(.-lower):not(.-interval) {
+  &:hover:not(.-upper):not(.-lower):not(.-interval):not(.-span) {
     border: 2px solid #3db2ff;
     border-radius: 10px;
   }
@@ -45,7 +45,8 @@
     background-color: #2aa9fd;
   }
 
-  &.-date {
+  &.-date,
+  &.-week {
     --button-size: 35px;
     margin-top: 5px;
 
@@ -57,21 +58,6 @@
     &.-lower {
       border-top-left-radius: 6px;
       border-bottom-left-radius: 6px;
-    }
-  }
-
-  &.-week {
-    --button-size: 40px;
-    border: 2px solid transparent;
-
-    &.-lower {
-      border-top-right-radius: 6px;
-      border-top-left-radius: 6px;
-    }
-
-    &.-upper {
-      border-bottom-left-radius: 6px;
-      border-bottom-right-radius: 6px;
     }
   }
 
@@ -90,6 +76,22 @@
     border-radius: 0;
     color: #fff;
     background-color: #93d4ff;
+  }
+  
+  &.-span {
+    border-radius: 0;
+    color: #fff;
+    background-color: #93d4ff;
+
+    &.-span_upper {
+      border-top-right-radius: 6px;
+      border-bottom-right-radius: 6px;
+    } 
+
+    &.-span_lower {
+      border-top-left-radius: 6px;
+      border-bottom-left-radius: 6px;
+    }
   }
 
   &.-upper:not(.-settled),

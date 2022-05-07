@@ -4,13 +4,12 @@ import CalendarCell from './CalendarCell'
 import {
   table as cellTable,
   getDateCells,
-  getWeekCells,
   getMonthCells,
   getYearCells,
   getWeekHeader,
   defaultFormatters,
 } from '../cells'
-import { deserializeDate, trimTime } from '../utils'
+import { calculateWeekSpan, deserializeDate, trimTime } from '../utils'
 
 export default defineComponent({
   props: {
@@ -66,18 +65,22 @@ export default defineComponent({
       ? { ...defaultFormatters, ...props.formatters }
       : defaultFormatters
 
+    const hoveringPayload = ref<number | null>(null)
+
     const handleMouseEvent = (
       event: MouseEvent,
       eventName: 'cellSelected' | 'cellHovered'
     ) => {
-      const payload = (event.target as HTMLButtonElement).getAttribute(
+      const rawPayload = (event.target as HTMLButtonElement).getAttribute(
         'data-payload'
       )
-      if (!payload) return
-      emit(eventName, parseInt(payload, 10))
+      if (!rawPayload) return
+      const parsedPayload = parseInt(rawPayload, 10)
+      hoveringPayload.value = parsedPayload
+      emit(eventName, parsedPayload)
     }
 
-    const isInterval = (payload: number): string | false => {
+    const isInterval = (payload: number): '-interval' | false => {
       if (!props.bound.upper || !props.bound.lower || !props.isCurrentType)
         return false
 
@@ -86,6 +89,15 @@ export default defineComponent({
         props.bound.lower < payload &&
         '-interval'
       )
+    }
+
+    const isSpanCell = (payload: number): string[] | string | false => {
+      if (!hoveringPayload.value || props.type !== 'week') return false
+      const { upper, lower } = calculateWeekSpan(hoveringPayload.value)
+
+      if (upper === payload) return ['-span', '-span_upper']
+      if (lower === payload) return ['-span', '-span_lower']
+      return upper > payload && lower < payload && '-span'
     }
 
     const isCellAvailable = (payload: number): '' | '-unavailable' => {
@@ -150,9 +162,10 @@ export default defineComponent({
         classNames?: string[]
       }[]
     >(() => {
-      const { year, month } = deserializeDate(props.date)
+      const { year } = deserializeDate(props.date)
       switch (props.type) {
         case 'date':
+        case 'week':
           return (cells.value as ReturnType<typeof getDateCells>).map(
             ({ date, position, day, month }) => {
               const payload = new Date(year, month - 1, date).getTime()
@@ -173,18 +186,6 @@ export default defineComponent({
               }
             }
           )
-        case 'week':
-          return (cells.value as ReturnType<typeof getWeekCells>).map(
-            (days, index) => ({
-              payload: new Date(year, month - 1, days[0]).getTime(),
-              formatter: formatters.week({
-                days,
-                index: index + 1,
-                month,
-                year,
-              }),
-            })
-          )
         case 'month':
           return (cells.value as ReturnType<typeof getMonthCells>).map(
             month => ({
@@ -204,12 +205,12 @@ export default defineComponent({
       <div
         class={['calendar-body', `-${props.type}`]}
         onClick={e => handleMouseEvent(e, 'cellSelected')}
-        onMouseover={e => handleMouseEvent(e, 'cellHovered')}>
+        onMouseover={e => handleMouseEvent(e, 'cellHovered')}
+        onMouseout={() => (hoveringPayload.value = null)}>
         {props.type === 'date' &&
           getWeekHeader().map(shortName => (
             <span class="calendar-cell_leading">{shortName}</span>
           ))}
-
         {cellAttrs.value.map(({ payload, classNames, formatter }) => (
           <CalendarCell
             class={[
@@ -221,6 +222,7 @@ export default defineComponent({
               !props.isSelecting && '-selected',
               isInterval(payload),
               isCellAvailable(payload),
+              isSpanCell(payload),
             ]}
             key={payload}
             payload={payload}>

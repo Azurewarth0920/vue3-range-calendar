@@ -12,6 +12,7 @@ import CalendarFooter from './components/CalendarFooter'
 import { defaults, Options } from './options'
 import {
   calculateSpan,
+  calculateWeekSpan,
   serializeDate,
   toPaddingNumber,
   trimTime,
@@ -181,6 +182,9 @@ export default defineComponent({
       const leftEdge = start.value
       const rightEdge = end.value || internalState.hovered
 
+      if (rightEdge && options.value.type === 'week')
+        return calculateWeekSpan(rightEdge)
+
       if (!leftEdge || !rightEdge)
         return {
           upper: null,
@@ -258,8 +262,16 @@ export default defineComponent({
       }
 
       // Select value
-      if (!options.value.singleSelectMode) {
+      if (options.value.singleSelectMode) {
         start.value = end.value = payload
+        return
+      }
+
+      // Week mode or fixed span mode
+      if (options.value.type === 'week') {
+        const { upper, lower } = calculateWeekSpan(payload)
+        start.value = lower
+        end.value = upper
         return
       }
 

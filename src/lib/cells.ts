@@ -59,26 +59,6 @@ export const getDateCells = (
     })
 }
 
-export const getWeekCells = (
-  { year, month }: { year: number; month: number },
-  from: WeekStartsFrom = 'sun'
-) => {
-  const firstDay = new Date(year, month - 1, 1)
-  const lastDay = new Date(year, month, 0)
-  const startingMargin = (7 - firstDay.getDay() - (from === 'sun' ? 0 : 1)) % 7
-  const totalWeeks = Math.ceil((lastDay.getDate() - startingMargin) / 7)
-  const marginWeek = [...Array(startingMargin)].map((_, key) => key + 1)
-
-  const normalWeeks = [
-    ...[...Array(totalWeeks - 1)].fill(7),
-    lastDay.getDate() - startingMargin - (totalWeeks - 1) * 7,
-  ].map((item, key) =>
-    [...Array(item)].map((_, day) => day + 1 + key * 7 + startingMargin)
-  )
-
-  return marginWeek.length ? [marginWeek, ...normalWeeks] : normalWeeks
-}
-
 export const getWeekHeader = (locale: string = 'en', offset: number = 0) => {
   const FIRST_SUNDAY_TIME = 226800000
   return [...Array(7)]
@@ -136,7 +116,7 @@ export const defaultFormatters = {
 
 export const table = {
   date: getDateCells,
-  week: getWeekCells,
+  week: getDateCells,
   month: getMonthCells,
   year: getYearCells,
 }
