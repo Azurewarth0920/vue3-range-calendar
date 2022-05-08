@@ -9,7 +9,12 @@ import {
   getWeekHeader,
   defaultFormatters,
 } from '../cells'
-import { calculateWeekSpan, deserializeDate, trimTime } from '../utils'
+import {
+  calculateFixedSpan,
+  calculateWeekSpan,
+  deserializeDate,
+  trimTime,
+} from '../utils'
 
 export default defineComponent({
   props: {
@@ -65,6 +70,10 @@ export default defineComponent({
       type: String,
       required: true,
     },
+    fixedSpan: {
+      type: Number,
+      required: true,
+    },
   },
   emits: ['cellSelected', 'cellHovered'],
   setup(props, { emit }) {
@@ -100,12 +109,19 @@ export default defineComponent({
     }
 
     const isSpanCell = (payload: number): string[] | string | false => {
-      if (!hoveringPayload.value || props.type !== 'week') return false
-      const { upper, lower } = calculateWeekSpan(
-        hoveringPayload.value,
-        props.weekOffset
-      )
+      if (!hoveringPayload.value) return false
+      const { upper, lower } =
+        props.type === 'week'
+          ? calculateWeekSpan(hoveringPayload.value, props.weekOffset)
+          : props.fixedSpan
+          ? calculateFixedSpan(
+              hoveringPayload.value,
+              props.fixedSpan,
+              props.type
+            )
+          : { upper: false, lower: false }
 
+      if (!upper || !lower) return false
       if (upper === payload) return ['-span', '-span_upper']
       if (lower === payload) return ['-span', '-span_lower']
       return upper > payload && lower < payload && '-span'
@@ -165,7 +181,6 @@ export default defineComponent({
     const cells = computed(() => {
       switch (props.type) {
         case 'date':
-        case 'fixed':
         case 'week':
           return getDateCells(deserializeDate(props.date), props.weekOffset)
         case 'month':
@@ -186,7 +201,6 @@ export default defineComponent({
       switch (props.type) {
         case 'date':
         case 'week':
-        case 'fixed':
           return (cells.value as ReturnType<typeof getDateCells>).map(
             ({ date, position, day, month }) => {
               const payload = new Date(year, month - 1, date).getTime()

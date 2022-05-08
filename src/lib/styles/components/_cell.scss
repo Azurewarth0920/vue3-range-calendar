@@ -21,8 +21,18 @@
   }
 
   &.-today {
-    border: 2px solid #3dff98;
-    border-radius: 10px;
+    position: relative;
+
+    &::after {
+      content: "";
+      position: absolute;
+      top: 5%;
+      left: 5%;
+      width: 90%;
+      height: 90%;
+      border: 2px solid #3dff98;
+      border-radius: 10px;
+    }
   }
 
   &.-sat,
@@ -45,6 +55,7 @@
     background-color: #2aa9fd;
   }
 
+  &.-span,
   &.-date,
   &.-week {
     --button-size: 35px;

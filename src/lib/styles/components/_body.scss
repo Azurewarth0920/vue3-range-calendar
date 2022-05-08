@@ -3,6 +3,7 @@
   margin-top: 5px;
 
   &.-date,
+  &.-span,
   &.-week {
     grid-template-columns: repeat(7, 1fr);
   }

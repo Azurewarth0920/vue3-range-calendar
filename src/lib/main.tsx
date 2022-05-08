@@ -13,6 +13,7 @@ import { defaults, Options } from './options'
 import {
   calculateSpan,
   calculateWeekSpan,
+  calculateFixedSpan,
   serializeDate,
   toPaddingNumber,
   trimTime,
@@ -182,9 +183,6 @@ export default defineComponent({
       const leftEdge = start.value
       const rightEdge = end.value || internalState.hovered
 
-      if (rightEdge && options.value.type === 'week')
-        return calculateWeekSpan(rightEdge, options.value.weekOffset)
-
       if (!leftEdge || !rightEdge)
         return {
           upper: null,
@@ -278,6 +276,18 @@ export default defineComponent({
         return
       }
 
+      if (options.value.fixedSpan) {
+        const { upper, lower } = calculateFixedSpan(
+          payload,
+          options.value.fixedSpan,
+          options.value.type
+        )
+
+        start.value = lower
+        end.value = upper
+        return
+      }
+
       if (start.value && end.value) {
         start.value = payload
         end.value = null
@@ -347,6 +357,7 @@ export default defineComponent({
               onCellSelected={handleCellSelect}
               locale={options.value.locale}
               weekOffset={options.value.weekOffset}
+              fixedSpan={options.value.fixedSpan}
             />
             {index === 0 &&
               options.value.time &&

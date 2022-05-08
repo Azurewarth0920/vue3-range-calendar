@@ -51,6 +51,39 @@ export const calculateSpan = (
   return new Date(year, month, day).getTime()
 }
 
+export const calculateFixedSpan = (
+  payload: number,
+  span: number,
+  type: 'month' | 'year' | 'date'
+) => {
+  const dateObj = new Date(payload)
+  const leftOffset = Math.ceil((span - 1) / 2)
+  const rightOffset = Math.floor((span - 1) / 2)
+  const year = dateObj.getFullYear()
+  const month = dateObj.getMonth()
+  const date = dateObj.getDate()
+
+  switch (type) {
+    case 'date':
+      return {
+        upper: new Date(year, month, date + rightOffset).getTime(),
+        lower: new Date(year, month, date - leftOffset).getTime(),
+      }
+
+    case 'month':
+      return {
+        upper: new Date(year, month + rightOffset, date).getTime(),
+        lower: new Date(year, month - leftOffset, date).getTime(),
+      }
+
+    case 'year':
+      return {
+        upper: new Date(year + rightOffset, month, date).getTime(),
+        lower: new Date(year - leftOffset, month, date).getTime(),
+      }
+  }
+}
+
 export const calculateWeekSpan = (
   payload: number,
   offset = 0,
