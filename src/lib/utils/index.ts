@@ -1,4 +1,4 @@
-import { MONTH_A_YEAR } from '../constants'
+import { MONTH_A_YEAR, MILLISECOND_A_DAY } from '../constants'
 import { Span } from '../options'
 
 export const serializeDate = (date: number | string | Date | null) => {
@@ -58,29 +58,35 @@ export const calculateFixedSpan = (
 ) => {
   const dateObj = new Date(payload)
   const leftOffset = Math.ceil((span - 1) / 2)
-  const rightOffset = Math.floor((span - 1) / 2)
   const year = dateObj.getFullYear()
   const month = dateObj.getMonth()
   const date = dateObj.getDate()
+  let ticks = null
 
   switch (type) {
     case 'date':
-      return {
-        upper: new Date(year, month, date + rightOffset).getTime(),
-        lower: new Date(year, month, date - leftOffset).getTime(),
-      }
+      ticks = [...Array(span)].map(
+        (_, i) => dateObj.getTime() + (i - leftOffset) * MILLISECOND_A_DAY
+      )
+      break
 
     case 'month':
-      return {
-        upper: new Date(year, month + rightOffset, date).getTime(),
-        lower: new Date(year, month - leftOffset, date).getTime(),
-      }
+      ticks = [...Array(span)].map((_, i) =>
+        new Date(year, month + i - leftOffset, date).getTime()
+      )
+      break
 
     case 'year':
-      return {
-        upper: new Date(year + rightOffset, month, date).getTime(),
-        lower: new Date(year - leftOffset, month, date).getTime(),
-      }
+      ticks = [...Array(span)].map((_, i) =>
+        new Date(year - leftOffset + i, month, date).getTime()
+      )
+      break
+  }
+
+  return {
+    upper: ticks[ticks.length - 1],
+    lower: ticks[0],
+    ticks,
   }
 }
 
@@ -91,19 +97,20 @@ export const calculateWeekSpan = (
   to = 6
 ) => {
   const date = new Date(payload)
-  const dayOffset = Math.abs((date.getDay() + offset) % 7)
+  const start = new Date(
+    date.getFullYear(),
+    date.getMonth(),
+    date.getDate() - Math.abs((date.getDay() + offset) % 7)
+  ).getTime()
+
+  const ticks = [...Array(to - from + 1)].map(
+    (_, i) => start + i * MILLISECOND_A_DAY
+  )
 
   return {
-    upper: new Date(
-      date.getFullYear(),
-      date.getMonth(),
-      date.getDate() + to - dayOffset
-    ).getTime(),
-    lower: new Date(
-      date.getFullYear(),
-      date.getMonth(),
-      date.getDate() + from - dayOffset
-    ).getTime(),
+    upper: ticks[ticks.length - 1],
+    lower: ticks[0],
+    ticks,
   }
 }
 

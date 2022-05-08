@@ -91,7 +91,12 @@ export default defineComponent({
       const rawPayload = (event.target as HTMLButtonElement).getAttribute(
         'data-payload'
       )
-      if (!rawPayload) return
+
+      const isDisabled = (event.target as HTMLButtonElement).classList.contains(
+        '-span_disabled'
+      )
+
+      if (!rawPayload || isDisabled) return
       const parsedPayload = parseInt(rawPayload, 10)
       hoveringPayload.value = parsedPayload
       emit(eventName, parsedPayload)
@@ -108,9 +113,14 @@ export default defineComponent({
       )
     }
 
-    const isSpanCell = (payload: number): string[] | string | false => {
-      if (!hoveringPayload.value) return false
-      const { upper, lower } =
+    const currentSpan = computed<{
+      upper: boolean | number
+      lower: boolean | number
+      ticks: number[]
+    }>(() => {
+      const nullValue = { upper: false, lower: false, ticks: [] }
+      if (!hoveringPayload.value) return nullValue
+      const { upper, lower, ticks } =
         props.type === 'week'
           ? calculateWeekSpan(hoveringPayload.value, props.weekOffset)
           : props.fixedSpan
@@ -119,16 +129,24 @@ export default defineComponent({
               props.fixedSpan,
               props.type
             )
-          : { upper: false, lower: false }
+          : nullValue
+      return { upper, lower, ticks }
+    })
+
+    const isSpanCell = (payload: number): string[] | string | false => {
+      const { upper, lower, ticks } = currentSpan.value
 
       if (!upper || !lower) return false
+      if (!ticks.every(isCellAvailable) && ticks.includes(payload))
+        return ['-span', '-span_disabled']
+
       if (upper === payload) return ['-span', '-span_upper']
       if (lower === payload) return ['-span', '-span_lower']
       return upper > payload && lower < payload && '-span'
     }
 
-    const isCellAvailable = (payload: number): '' | '-unavailable' => {
-      if (!props.isCurrentType) return ''
+    const isCellAvailable = (payload: number): boolean => {
+      if (!props.isCurrentType) return true
 
       if (props.maxRange && props.isSelecting) {
         const {
@@ -142,7 +160,7 @@ export default defineComponent({
           payload <= maxLower ||
           (payload <= minUpper && payload >= minLower)
         )
-          return '-unavailable'
+          return false
       }
 
       if (
@@ -150,16 +168,16 @@ export default defineComponent({
           ([lower, upper]) => payload >= lower && payload <= upper
         )
       )
-        return ''
+        return true
 
       if (
         props.selectable?.unavailable?.some(
           ([lower, upper]) => payload >= lower && payload <= upper
         )
       )
-        return '-unavailable'
+        return false
 
-      return ''
+      return true
     }
 
     const settledDate = ref<number | null>(null)
@@ -256,7 +274,7 @@ export default defineComponent({
               settledDate.value === payload && '-settled',
               !props.isSelecting && '-selected',
               isInterval(payload),
-              isCellAvailable(payload),
+              !isCellAvailable(payload) && '-unavailable',
               isSpanCell(payload),
             ]}
             key={payload}
