@@ -12,6 +12,10 @@ export type Options = {
   attachElement?: Ref<HTMLElement | null>
   attachDirection?: 'top' | 'left' | 'bottom' | 'right'
   weekOffset?: number
+  weekSpan?: {
+    from?: number
+    to?: number
+  }
   fixedSpan?: number
   minSpan?: Span
   maxSpan?: Span

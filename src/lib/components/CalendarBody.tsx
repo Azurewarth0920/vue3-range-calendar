@@ -66,6 +66,13 @@ export default defineComponent({
       type: Number,
       required: true,
     },
+    weekSpan: {
+      type: Object as PropType<{
+        from?: number
+        to?: number
+      }>,
+      default: null,
+    },
     locale: {
       type: String,
       required: true,
@@ -122,7 +129,12 @@ export default defineComponent({
       if (!hoveringPayload.value) return nullValue
       const { upper, lower, ticks } =
         props.type === 'week'
-          ? calculateWeekSpan(hoveringPayload.value, props.weekOffset)
+          ? calculateWeekSpan(
+              hoveringPayload.value,
+              props.weekOffset,
+              props.weekSpan?.from ?? 0,
+              props.weekSpan?.to ?? 0
+            )
           : props.fixedSpan
           ? calculateFixedSpan(
               hoveringPayload.value,
@@ -145,6 +157,8 @@ export default defineComponent({
       return upper > payload && lower < payload && '-span'
     }
 
+    // Should be fixed.
+    // Pre-calculate the available cells.
     const isCellAvailable = (payload: number): boolean => {
       if (!props.isCurrentType) return true
 

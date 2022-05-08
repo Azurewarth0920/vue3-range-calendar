@@ -269,7 +269,9 @@ export default defineComponent({
       if (options.value.type === 'week') {
         const { upper, lower } = calculateWeekSpan(
           payload,
-          options.value.weekOffset
+          options.value.weekOffset,
+          options.value.weekSpan?.from ?? 0,
+          options.value.weekSpan?.to ?? 6
         )
         start.value = lower
         end.value = upper
@@ -356,6 +358,7 @@ export default defineComponent({
               onCellHovered={handleCellHovered}
               onCellSelected={handleCellSelect}
               locale={options.value.locale}
+              weekSpan={options.value.weekSpan}
               weekOffset={options.value.weekOffset}
               fixedSpan={options.value.fixedSpan}
             />
