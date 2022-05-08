@@ -1,5 +1,6 @@
 import { Ref } from 'vue'
 import { DateFormatterArgs, WeekFormatterArgs } from './cells'
+import { toPaddingNumber } from './utils'
 
 export type Span = {
   unit: 'day' | 'week' | 'month' | 'year'
@@ -46,6 +47,8 @@ export type Options = {
     month?: (payload: { month: number; year: number }) => string
     year?: (payload: { year: number }) => string
   }
+  serializer?: (dateString: string) => Date
+  deserializer?: (dateObj: Date) => string
 }
 
 export const defaults = {
@@ -56,4 +59,11 @@ export const defaults = {
   type: 'date',
   weekOffset: 0,
   fixedSpan: 0,
+  serializer: (dateString: string) => new Date(dateString),
+  deserializer: (dateObj: Date) =>
+    `${dateObj.getFullYear()}-${
+      dateObj.getMonth() + 1
+    }-${dateObj.getDate()} ${toPaddingNumber(
+      dateObj.getHours()
+    )}:${toPaddingNumber(dateObj.getMinutes())}`,
 } as const

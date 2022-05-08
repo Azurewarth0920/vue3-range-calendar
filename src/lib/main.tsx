@@ -26,15 +26,15 @@ import TimePickerTo from './components/TimePickerTo'
 export default defineComponent({
   props: {
     select: {
-      type: Object as PropType<Date>,
+      type: String,
       default: null,
     },
     start: {
-      type: Object as PropType<Date>,
+      type: String,
       default: null,
     },
     end: {
-      type: Object as PropType<Date>,
+      type: String,
       default: null,
     },
     options: {
@@ -52,14 +52,20 @@ export default defineComponent({
     })
 
     const internalState = reactive({
-      passiveStart:
-        (options.value.singleSelectMode
-          ? props.select?.getTime()
-          : props.start?.getTime()) || (null as number | null),
-      passiveEnd:
-        (options.value.singleSelectMode
-          ? props.select?.getTime()
-          : props.start?.getTime()) || (null as number | null),
+      passiveStart: options.value.singleSelectMode
+        ? props.select
+          ? options.value.serializer(props.select).getTime()
+          : (null as number | null)
+        : props.start
+        ? options.value.serializer(props.start).getTime()
+        : (null as number | null),
+      passiveEnd: options.value.singleSelectMode
+        ? props.select
+          ? options.value.serializer(props.select).getTime()
+          : (null as number | null)
+        : props.end
+        ? options.value.serializer(props.end).getTime()
+        : (null as number | null),
       hovered: null as number | null,
       currentDate: serializeDate(
         options.value.singleSelectMode ? props.select : props.start
@@ -74,9 +80,16 @@ export default defineComponent({
         if (options.value.passive) {
           return internalState.passiveStart
         }
-        return options.value.singleSelectMode
-          ? props.select?.getTime()
-          : props.start?.getTime()
+
+        if (options.value.singleSelectMode) {
+          return props.select
+            ? options.value.serializer(props.select).getTime()
+            : null
+        }
+
+        return props.start
+          ? options.value.serializer(props.start).getTime()
+          : null
       },
       set: (time: number | null) => {
         if (options.value.passive) {
@@ -84,11 +97,12 @@ export default defineComponent({
           return
         }
 
+        const payload = time ? options.value.deserializer(new Date(time)) : null
+
         if (options.value.singleSelectMode) {
-          emit('update:select', time ? new Date(time) : null)
-        } else {
-          emit('update:start', time ? new Date(time) : null)
+          return emit('update:select', payload)
         }
+        emit('update:start', payload)
       },
     })
 
@@ -97,14 +111,17 @@ export default defineComponent({
         if (options.value.passive) {
           return internalState.passiveEnd
         }
-        return props.end?.getTime() ?? null
+        return props.end ? options.value.serializer(props.end).getTime() : null
       },
       set: (time: number | null) => {
         if (options.value.passive) {
           internalState.passiveEnd = time
         }
 
-        emit('update:end', time ? new Date(time) : null)
+        emit(
+          'update:end',
+          time ? options.value.deserializer(new Date(time)) : null
+        )
       },
     })
 
