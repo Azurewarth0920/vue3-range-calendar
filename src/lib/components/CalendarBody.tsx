@@ -56,11 +56,9 @@ export default defineComponent({
       type: Object as PropType<Options['formatters']>,
       default: null,
     },
-    selectable: {
-      type: Object as PropType<{
-        available: [number, number][] | undefined
-        unavailable: [number, number][] | undefined
-      }>,
+    unavailable: {
+      type: Array as PropType<[number, number][]>,
+      default: () => [],
     },
     weekOffset: {
       type: Number,
@@ -162,7 +160,7 @@ export default defineComponent({
     const isCellAvailable = (payload: number): boolean => {
       if (!props.isCurrentType) return true
 
-      if (props.maxRange && props.isSelecting) {
+      if (props.maxRange && props.isSelecting && !props.fixedSpan) {
         const {
           maxUpper = Number.POSITIVE_INFINITY,
           maxLower = Number.NEGATIVE_INFINITY,
@@ -178,14 +176,7 @@ export default defineComponent({
       }
 
       if (
-        props.selectable?.available?.some(
-          ([lower, upper]) => payload >= lower && payload <= upper
-        )
-      )
-        return true
-
-      if (
-        props.selectable?.unavailable?.some(
+        props.unavailable.some(
           ([lower, upper]) => payload >= lower && payload <= upper
         )
       )

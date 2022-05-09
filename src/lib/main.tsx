@@ -212,20 +212,15 @@ export default defineComponent({
       }
     })
 
-    const selectable = computed<{
-      available: [number, number][] | undefined
-      unavailable: [number, number][] | undefined
-    }>(() => {
-      return {
-        available: options.value.available?.map(({ from, to }) => [
+    const unavailable = computed<[number, number][]>(() => {
+      // TODO: Fix span calculation.
+
+      return (
+        options.value.unavailable?.map(({ from, to }) => [
           from ? trimTime(from) : Number.POSITIVE_INFINITY,
           to ? trimTime(to) : Number.NEGATIVE_INFINITY,
-        ]),
-        unavailable: options.value.unavailable?.map(({ from, to }) => [
-          from ? trimTime(from) : Number.POSITIVE_INFINITY,
-          to ? trimTime(to) : Number.NEGATIVE_INFINITY,
-        ]),
-      }
+        ]) ?? []
+      )
     })
 
     const maxRange = computed(() => {
@@ -368,7 +363,7 @@ export default defineComponent({
               type={internalState.currentType}
               bound={bound.value}
               formatters={options.value.formatters}
-              selectable={selectable.value}
+              unavailable={unavailable.value}
               maxRange={maxRange.value}
               isSelecting={!end.value}
               isCurrentType={internalState.currentType === options.value.type}
