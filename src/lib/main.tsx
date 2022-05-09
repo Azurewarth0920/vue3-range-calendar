@@ -17,6 +17,7 @@ import {
   serializeDate,
   toPaddingNumber,
   trimTime,
+  expandUnavailableSpan,
 } from './utils'
 import { CELLS_IN_BLOCK, MONTH_A_YEAR } from './constants'
 import { useElementPosition } from './hooks/useElementPosition'
@@ -213,12 +214,22 @@ export default defineComponent({
     })
 
     const unavailable = computed<[number, number][]>(() => {
-      // TODO: Fix span calculation.
-
       return (
         options.value.unavailable?.map(({ from, to }) => [
-          from ? trimTime(from) : Number.POSITIVE_INFINITY,
-          to ? trimTime(to) : Number.NEGATIVE_INFINITY,
+          from
+            ? expandUnavailableSpan(
+                from,
+                options.value.type,
+                options.value.fixedSpan * -1
+              )
+            : Number.POSITIVE_INFINITY,
+          to
+            ? expandUnavailableSpan(
+                to,
+                options.value.type,
+                options.value.fixedSpan
+              )
+            : Number.NEGATIVE_INFINITY,
         ]) ?? []
       )
     })

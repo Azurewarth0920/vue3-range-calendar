@@ -97,11 +97,7 @@ export default defineComponent({
         'data-payload'
       )
 
-      const isDisabled = (event.target as HTMLButtonElement).classList.contains(
-        '-span_disabled'
-      )
-
-      if (!rawPayload || isDisabled) return
+      if (!rawPayload) return
       const parsedPayload = parseInt(rawPayload, 10)
       hoveringPayload.value = parsedPayload
       emit(eventName, parsedPayload)
@@ -118,38 +114,20 @@ export default defineComponent({
       )
     }
 
-    const currentSpan = computed<{
-      upper: boolean | number
-      lower: boolean | number
-      ticks: number[]
-    }>(() => {
-      const nullValue = { upper: false, lower: false, ticks: [] }
-      if (!hoveringPayload.value) return nullValue
-      const { upper, lower, ticks } =
+    const isSpanCell = (payload: number): string[] | string | false => {
+      if (!hoveringPayload.value) return false
+      const { upper, lower } =
         props.type === 'week'
-          ? calculateWeekSpan(
-              hoveringPayload.value,
-              props.weekOffset,
-              props.weekSpan?.from ?? 0,
-              props.weekSpan?.to ?? 0
-            )
+          ? calculateWeekSpan(hoveringPayload.value, props.weekOffset)
           : props.fixedSpan
           ? calculateFixedSpan(
               hoveringPayload.value,
               props.fixedSpan,
               props.type
             )
-          : nullValue
-      return { upper, lower, ticks }
-    })
-
-    const isSpanCell = (payload: number): string[] | string | false => {
-      const { upper, lower, ticks } = currentSpan.value
+          : { upper: false, lower: false }
 
       if (!upper || !lower) return false
-      if (!ticks.every(isCellAvailable) && ticks.includes(payload))
-        return ['-span', '-span_disabled']
-
       if (upper === payload) return ['-span', '-span_upper']
       if (lower === payload) return ['-span', '-span_lower']
       return upper > payload && lower < payload && '-span'

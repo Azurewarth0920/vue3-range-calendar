@@ -103,12 +103,6 @@
     border-radius: 0;
     color: #fff;
     background-color: #93d4ff;
-    
-    &.-span_disabled {
-      color: #9a9a9a;
-      background-color: initial;
-      cursor: initial;
-    }
 
     &.-span_upper:not(.-interval):not(.-lower) {
       border-top-right-radius: 6px;
