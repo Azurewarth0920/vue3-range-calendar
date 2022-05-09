@@ -103,6 +103,31 @@ export default defineComponent({
       emit(eventName, parsedPayload)
     }
 
+    const currentAvailableSpan = computed(() => {
+      const settled = settledDate.value
+      if (!settled || !props.isSelecting)
+        return {
+          upper: Number.POSITIVE_INFINITY,
+          lower: Number.NEGATIVE_INFINITY,
+        }
+
+      const flattedUnavailable = props.unavailable.flat()
+      const upper =
+        flattedUnavailable
+          .filter(item => item > settled)
+          .sort((a, b) => b - a)[0] || Number.POSITIVE_INFINITY
+
+      const lower =
+        flattedUnavailable
+          .filter(item => item < settled)
+          .sort((a, b) => a - b)[0] || Number.NEGATIVE_INFINITY
+
+      return {
+        upper,
+        lower,
+      }
+    })
+
     const isInterval = (payload: number): '-interval' | false => {
       if (!props.bound.upper || !props.bound.lower || !props.isCurrentType)
         return false
@@ -156,7 +181,9 @@ export default defineComponent({
       if (
         props.unavailable.some(
           ([lower, upper]) => payload >= lower && payload <= upper
-        )
+        ) ||
+        currentAvailableSpan.value.upper < payload ||
+        currentAvailableSpan.value.lower > payload
       )
         return false
 
