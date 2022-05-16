@@ -25,14 +25,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Azurewarth0920/vue-daterange-picker.git"
+    "url": "git+https://github.com/Azurewarth0920/vue3-range-calendar.git"
   },
   "author": "pei.fan",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Azurewarth0920/vue-daterange-picker/issues"
+    "url": "https://github.com/Azurewarth0920/vue3-range-calendar/issues"
   },
-  "homepage": "https://github.com/Azurewarth0920/vue-daterange-picker#readme",
+  "homepage": "https://github.com/Azurewarth0920/vue3-range-calendar#readme",
   "devDependencies": {
     "@babel/plugin-external-helpers": "^7.16.7",
     "@rollup/plugin-babel": "^5.3.1",
