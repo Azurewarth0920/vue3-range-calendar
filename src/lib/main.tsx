@@ -420,7 +420,7 @@ export default defineComponent({
                 }
                 cancelText={
                   typeof options.value.passive !== 'boolean' &&
-                  options.value.passive.applyText
+                  options.value.passive.cancelText
                 }
               />
             )}

@@ -4,9 +4,11 @@ export default defineComponent({
   props: {
     applyText: {
       type: [String, Boolean],
+      default: 'Apply',
     },
     cancelText: {
       type: [String, Boolean],
+      default: 'Apply',
     },
     isSelected: {
       type: Boolean,
@@ -21,14 +23,14 @@ export default defineComponent({
           class="calendar-footer_button -cancel"
           onClick={() => emit('cancel')}
         >
-          {props.cancelText || 'Cancel'}
+          {props.cancelText}
         </button>
         <button
           class="calendar-footer_button -apply"
           onClick={() => emit('apply')}
           disabled={!props.isSelected}
         >
-          {props.applyText || 'Apply'}
+          {props.applyText}
         </button>
       </div>
     )
