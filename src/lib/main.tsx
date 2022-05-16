@@ -357,7 +357,8 @@ export default defineComponent({
       <div
         class={['calendar-wrapper', options.value.attachElement && '-attached']}
         style={attachedStyles.value}
-        ref={calendarRef}>
+        ref={calendarRef}
+      >
         {[...Array(options.value.count)].map((_, index) => (
           <div class="calendar-unit">
             <CalendarHeader

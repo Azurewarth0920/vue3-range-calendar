@@ -1,4 +1,4 @@
-import { computed, defineComponent, PropType, watch, watchEffect } from 'vue'
+import { computed, defineComponent, PropType, watch } from 'vue'
 
 export default defineComponent({
   props: {

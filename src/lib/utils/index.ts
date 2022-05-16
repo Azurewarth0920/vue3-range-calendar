@@ -107,7 +107,7 @@ export const calculateWeekSpan = (
   }
 }
 
-export const trimTime = (date: Date, hour: number = 0, minute = 0) =>
+export const trimTime = (date: Date, hour = 0, minute = 0) =>
   new Date(
     date.getFullYear(),
     date.getMonth(),

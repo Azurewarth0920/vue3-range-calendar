@@ -32,6 +32,10 @@ export const useElementPosition = (
     scrollLeft + left + targetWidth + interval
   )
 
+  const topValue = top + scrollTop - calendarHeight - interval
+
+  const leftValue = left + scrollLeft - calendarWidth - interval
+
   switch (direction) {
     case 'bottom':
       return {
@@ -40,14 +44,12 @@ export const useElementPosition = (
       }
 
     case 'top':
-      const topValue = top + scrollTop - calendarHeight - interval
       return {
         left: toAdjustedLeft(scrollLeft + left),
         top: topValue >= 0 ? toAdjustedTop(topValue) : defaultTopValue,
       }
 
     case 'left':
-      const leftValue = left + scrollLeft - calendarWidth - interval
       return {
         left: leftValue > 0 ? toAdjustedLeft(leftValue) : defaultLeftValue,
         top: toAdjustedTop(scrollTop + top),

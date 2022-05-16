@@ -1,4 +1,4 @@
-import { computed, defineComponent, PropType, ref } from 'vue'
+import { defineComponent, PropType } from 'vue'
 import { Options } from '../options'
 import { deserializeDate } from '../utils'
 
@@ -28,7 +28,8 @@ export default defineComponent({
         {props.showGoPrev && (
           <button
             class="calendar-header_button -prev"
-            onClick={() => emit('prevClicked')}>
+            onClick={() => emit('prevClicked')}
+          >
             Prev
           </button>
         )}
@@ -36,7 +37,8 @@ export default defineComponent({
           {props.type !== 'year' && (
             <button
               class="calendar-header_title"
-              onClick={() => emit('switchType')}>
+              onClick={() => emit('switchType')}
+            >
               <span>{deserializeDate(props.date).year}</span>
               {props.type !== 'month' && (
                 <span> / {deserializeDate(props.date).month}</span>
@@ -47,7 +49,8 @@ export default defineComponent({
         {props.showGoNext && (
           <button
             class="calendar-header_button -next"
-            onClick={() => emit('nextClicked')}>
+            onClick={() => emit('nextClicked')}
+          >
             Next
           </button>
         )}

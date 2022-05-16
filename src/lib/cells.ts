@@ -12,7 +12,7 @@ const refTable: Record<number, string> = {
 
 export const getDateCells = (
   { year, month }: { year: number; month: number },
-  offset: number = 0
+  offset = 0
 ) => {
   const firstDay = new Date(year, month - 1, 1)
   const lastDay = new Date(year, month, 0)
@@ -58,7 +58,7 @@ export const getDateCells = (
     })
 }
 
-export const getWeekHeader = (locale: string = 'en', offset: number = 0) => {
+export const getWeekHeader = (locale = 'en', offset = 0) => {
   const FIRST_SUNDAY_TIME = 226800000
   return [...Array(7)]
     .map((_, index) => Math.abs(index - offset) % 7)

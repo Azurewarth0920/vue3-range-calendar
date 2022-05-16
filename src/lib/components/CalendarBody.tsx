@@ -2,7 +2,6 @@ import { computed, defineComponent, PropType, ref, watchEffect } from 'vue'
 import { Options } from '../options'
 import CalendarCell from './CalendarCell'
 import {
-  table as cellTable,
   getDateCells,
   getMonthCells,
   getYearCells,
@@ -32,6 +31,7 @@ export default defineComponent({
           }
         | undefined
       >,
+      default: () => ({}),
     },
     type: {
       type: String as PropType<Options['type']>,
@@ -208,14 +208,12 @@ export default defineComponent({
 
     const cells = computed(() => {
       switch (props.type) {
-        case 'date':
-        case 'week':
-          return getDateCells(deserializeDate(props.date), props.weekOffset)
         case 'month':
           return getMonthCells()
         case 'year':
           return getYearCells(deserializeDate(props.date))
       }
+      return getDateCells(deserializeDate(props.date), props.weekOffset)
     })
 
     const cellAttrs = computed<
@@ -227,28 +225,6 @@ export default defineComponent({
     >(() => {
       const { year } = deserializeDate(props.date)
       switch (props.type) {
-        case 'date':
-        case 'week':
-          return (cells.value as ReturnType<typeof getDateCells>).map(
-            ({ date, position, day, month }) => {
-              const payload = new Date(year, month - 1, date).getTime()
-              return {
-                classNames: [
-                  `-${position}`,
-                  `-${day}`,
-                  today === payload && '-today',
-                ],
-                payload,
-                formatter: formatters.date({
-                  date,
-                  position,
-                  day,
-                  month,
-                  year,
-                }),
-              }
-            }
-          )
         case 'month':
           return (cells.value as ReturnType<typeof getMonthCells>).map(
             month => ({
@@ -262,6 +238,27 @@ export default defineComponent({
             formatter: formatters.year({ year }),
           }))
       }
+
+      return (cells.value as ReturnType<typeof getDateCells>).map(
+        ({ date, position, day, month }) => {
+          const payload = new Date(year, month - 1, date).getTime()
+          return {
+            classNames: [
+              `-${position}`,
+              `-${day}`,
+              today === payload && '-today',
+            ],
+            payload,
+            formatter: formatters.date({
+              date,
+              position,
+              day,
+              month,
+              year,
+            }),
+          }
+        }
+      )
     })
 
     return () => (
@@ -269,7 +266,8 @@ export default defineComponent({
         class={['calendar-body', `-${props.type}`]}
         onClick={e => handleMouseEvent(e, 'cellSelected')}
         onMouseover={e => handleMouseEvent(e, 'cellHovered')}
-        onMouseout={() => (hoveringPayload.value = null)}>
+        onMouseout={() => (hoveringPayload.value = null)}
+      >
         {['date', 'fixed', 'week'].includes(props.type) &&
           getWeekHeader(props.locale, props.weekOffset).map(shortName => (
             <span class="calendar-cell_leading">{shortName}</span>
@@ -288,7 +286,8 @@ export default defineComponent({
               isSpanCell(payload),
             ]}
             key={payload}
-            payload={payload}>
+            payload={payload}
+          >
             {formatter}
           </CalendarCell>
         ))}

@@ -19,7 +19,7 @@
     position: relative;
 
     &::after {
-      content: "";
+      content: '';
       position: absolute;
       top: 0;
       left: 0;
@@ -34,7 +34,7 @@
     position: relative;
 
     &::after {
-      content: "";
+      content: '';
       position: absolute;
       top: 5%;
       left: 5%;
@@ -98,7 +98,7 @@
     color: #fff;
     background-color: #93d4ff;
   }
-  
+
   &.-span {
     border-radius: 0;
     color: #fff;
@@ -107,7 +107,7 @@
     &.-span_upper:not(.-interval):not(.-lower) {
       border-top-right-radius: 6px;
       border-bottom-right-radius: 6px;
-    } 
+    }
 
     &.-span_lower:not(.-interval):not(.-upper) {
       border-top-left-radius: 6px;
