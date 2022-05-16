@@ -40,8 +40,8 @@ export default [
     input: 'src/index.ts',
     output: [
       {
-        name: pkg.name,
-        file: pkg.main,
+        name: 'daterangePicker',
+        file: pkg.unpkg,
         format: 'umd',
         globals,
         plugins: [terser()],
