@@ -1,12 +1,8 @@
 <template>
-  <p>start: <input type="text" v-model="start" /></p>
-  <p>end: <input type="text" v-model="end" /></p>
-  <p></p>
-  <daterange-picker
-    v-model:start="start"
-    v-model:end="end"
-    :options="options"
-  />
+  <button ref="attached" style="margin-top: 1000px">attached Element</button>
+  <p>start: <input v-model="start" type="text" /></p>
+  <p>end: <input v-model="end" type="text" /></p>
+  <range-calendar v-model:start="start" v-model:end="end" :options="options" />
 </template>
 
 <script lang="ts">
@@ -18,6 +14,7 @@ export default defineComponent({
   setup() {
     const start = ref<Date | null>(null)
     const end = ref<Date | null>(null)
+    const attached = ref<HTMLButtonElement | null>(null)
 
     const options: Options = {
       type: 'date',
@@ -28,12 +25,14 @@ export default defineComponent({
           to: new Date('2022-05-05'),
         },
       ],
+      attachElement: attached,
     }
 
     return {
       start,
       end,
       options,
+      attached,
     }
   },
 })

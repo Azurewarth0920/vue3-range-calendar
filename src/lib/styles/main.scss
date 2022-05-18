@@ -19,14 +19,17 @@
   }
 
   &-wrapper {
-    display: flex;
+    display: inline-flex;
     padding: 15px;
     border: 1px solid rgb(239, 239, 239);
+    background-color: #fff;
     border-radius: 3px;
 
     &.-attached {
-      position: fixed;
+      position: absolute;
       visibility: hidden;
+      left: 0;
+      top: 0;
     }
   }
 }

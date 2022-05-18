@@ -13,8 +13,14 @@ export const useElementPosition = (
     height: targetHeight,
   } = el.getBoundingClientRect()
 
-  const { width: calendarWidth, height: calendarHeight } =
-    calendarEl.getBoundingClientRect()
+  const {
+    top: calendarTop,
+    left: calendarLeft,
+    width: calendarWidth,
+    height: calendarHeight,
+  } = calendarEl.getBoundingClientRect()
+
+  console.log(calendarTop, calendarLeft)
 
   const toAdjustedLeft = (left: number) => {
     return `calc(${left}px +  var(--left-adjustment, 0px))`
@@ -25,11 +31,11 @@ export const useElementPosition = (
   }
 
   const defaultTopValue = toAdjustedTop(
-    scrollTop + top + targetHeight + interval
+    scrollTop + top + targetHeight + interval - calendarTop
   )
 
   const defaultLeftValue = toAdjustedLeft(
-    scrollLeft + left + targetWidth + interval
+    scrollLeft + left + targetWidth + interval - calendarLeft
   )
 
   const topValue = top + scrollTop - calendarHeight - interval
@@ -39,26 +45,26 @@ export const useElementPosition = (
   switch (direction) {
     case 'bottom':
       return {
-        left: toAdjustedLeft(scrollLeft + left),
+        left: toAdjustedLeft(scrollLeft + left - calendarLeft),
         top: defaultTopValue,
       }
 
     case 'top':
       return {
-        left: toAdjustedLeft(scrollLeft + left),
+        left: toAdjustedLeft(scrollLeft + left - calendarLeft),
         top: topValue >= 0 ? toAdjustedTop(topValue) : defaultTopValue,
       }
 
     case 'left':
       return {
         left: leftValue > 0 ? toAdjustedLeft(leftValue) : defaultLeftValue,
-        top: toAdjustedTop(scrollTop + top),
+        top: toAdjustedTop(scrollTop + top - calendarTop),
       }
 
     case 'right':
       return {
         left: defaultLeftValue,
-        top: toAdjustedTop(scrollTop + top),
+        top: toAdjustedTop(scrollTop + top - calendarTop),
       }
 
     default:

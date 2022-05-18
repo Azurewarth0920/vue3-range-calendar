@@ -4,7 +4,7 @@ import '../src/lib/styles/main.scss'
 
 const plugin: Plugin = {
   install: (app: App) => {
-    app.component('DaterangePicker', VueDateRangePicker)
+    app.component('RangeCalendar', VueDateRangePicker)
   },
 }
 

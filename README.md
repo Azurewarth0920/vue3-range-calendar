@@ -13,12 +13,33 @@ yarn add vue3-range-calendar
 npm install vue3-range-calendar
 ```
 
+Install component to the Vue instance.
+
 ```JavaScript
 import { createApp } from 'vue'
-import DaterangePicker from 'vue3-range-calendar'
+import RangeCalendar from 'vue3-range-calendar'
+import 'vue3-range-calendar/dist/styles/index.css'
 
 const app = Vue.createApp({...})
-app.use(DaterangePicker)
+app.use(RangeCalendar)
+```
+
+Then you can use component RangeCalendar on vue template.
+
+eg.
+
+```Vue
+<script setup>
+const start = ref<Date | null>(null)
+const end = ref<Date | null>(null)
+</script>
+
+
+<template>
+  <p>start: <input v-model="start" type="text" /></p>
+  <p>end: <input v-model="end" type="text" /></p>
+  <range-calendar v-model:start="start" v-model:end="end" />
+</template>
 ```
 
 ## Docs
