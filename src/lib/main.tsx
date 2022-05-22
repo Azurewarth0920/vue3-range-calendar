@@ -5,6 +5,7 @@ import {
   PropType,
   reactive,
   ref,
+  watch,
 } from 'vue'
 import CalendarBody from './components/CalendarBody'
 import CalendarHeader from './components/CalendarHeader'
@@ -172,7 +173,7 @@ export default defineComponent({
 
     const attachedStyles = ref<{ [key: string]: unknown }>({})
 
-    onMounted(() => {
+    const mountAttachmentStyle = () => {
       if (
         !options.value.attachElement ||
         !calendarRef.value ||
@@ -187,7 +188,18 @@ export default defineComponent({
         ),
         visibility: 'visible',
       }
+    }
+
+    onMounted(() => {
+      mountAttachmentStyle()
     })
+
+    watch(
+      () => options.value.attachDirection,
+      () => {
+        mountAttachmentStyle()
+      }
+    )
 
     const handleSwitch = (direction: 1 | -1 = 1) => {
       internalState.currentDate +=
@@ -241,16 +253,37 @@ export default defineComponent({
 
       return {
         maxUpper: options.value.maxSpan
-          ? calculateSpan(start.value, options.value.maxSpan)
+          ? calculateSpan(
+              start.value,
+              options.value.maxSpan,
+              options.value.type
+            )
           : undefined,
         maxLower: options.value.maxSpan
-          ? calculateSpan(start.value, options.value.maxSpan, -1)
+          ? calculateSpan(
+              start.value,
+              options.value.maxSpan,
+              options.value.type,
+              -1
+            )
           : undefined,
         minUpper: options.value.minSpan
-          ? calculateSpan(start.value, options.value.minSpan)
+          ? calculateSpan(
+              start.value,
+              options.value.minSpan,
+              options.value.type,
+              1,
+              -1
+            )
           : undefined,
         minLower: options.value.minSpan
-          ? calculateSpan(start.value, options.value.minSpan, -1)
+          ? calculateSpan(
+              start.value,
+              options.value.minSpan,
+              options.value.type,
+              -1,
+              1
+            )
           : undefined,
       }
     })

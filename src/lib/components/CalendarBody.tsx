@@ -158,11 +158,8 @@ export default defineComponent({
       return upper > payload && lower < payload && '-span'
     }
 
-    // Should be fixed.
-    // Pre-calculate the available cells.
     const isCellAvailable = (payload: number): boolean => {
       if (!props.isCurrentType) return true
-
       if (props.maxRange && props.isSelecting && !props.fixedSpan) {
         const {
           maxUpper = Number.POSITIVE_INFINITY,
@@ -173,7 +170,7 @@ export default defineComponent({
         if (
           payload >= maxUpper ||
           payload <= maxLower ||
-          (payload <= minUpper && payload >= minLower)
+          (payload < minUpper && payload > minLower)
         )
           return false
       }

@@ -25,7 +25,9 @@ export const deserializeDate = (date: number) => {
 export const calculateSpan = (
   payload: number,
   span: Span,
-  direction: 1 | -1 = 1
+  type: 'date' | 'week' | 'month' | 'year',
+  direction: 1 | -1 = 1,
+  offset = 0
 ): number => {
   const date = new Date(payload)
 
@@ -35,16 +37,19 @@ export const calculateSpan = (
 
   switch (span.unit) {
     case 'day':
-      day += span.value * direction
+      day +=
+        span.value * direction + (['date', 'week'].includes(type) ? offset : 0)
       break
     case 'week':
-      day += span.value * direction * 7
+      day +=
+        span.value * direction * 7 +
+        (['date', 'week'].includes(type) ? offset : 0)
       break
     case 'month':
-      month += span.value * direction
+      month += span.value * direction + (type === 'month' ? offset : 0)
       break
     case 'year':
-      year += span.value * direction
+      year += span.value * direction + (type === 'year' ? offset : 0)
       break
   }
 
