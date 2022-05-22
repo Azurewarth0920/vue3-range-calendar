@@ -4,8 +4,6 @@ export const useElementPosition = (
   direction: 'top' | 'bottom' | 'left' | 'right' = 'bottom'
 ) => {
   const interval = 20
-  const scrollTop = document.documentElement.scrollTop
-  const scrollLeft = document.documentElement.scrollLeft
   const {
     top,
     left,
@@ -13,14 +11,14 @@ export const useElementPosition = (
     height: targetHeight,
   } = el.getBoundingClientRect()
 
-  const {
-    top: calendarTop,
-    left: calendarLeft,
-    width: calendarWidth,
-    height: calendarHeight,
-  } = calendarEl.getBoundingClientRect()
+  const { width: calendarWidth, height: calendarHeight } =
+    calendarEl.getBoundingClientRect()
 
-  console.log(calendarTop, calendarLeft)
+  const { top: parentTop, left: parentLeft } =
+    calendarEl.offsetParent?.getBoundingClientRect?.() ?? {
+      top: 0,
+      left: 0,
+    }
 
   const toAdjustedLeft = (left: number) => {
     return `calc(${left}px +  var(--left-adjustment, 0px))`
@@ -31,40 +29,40 @@ export const useElementPosition = (
   }
 
   const defaultTopValue = toAdjustedTop(
-    scrollTop + top + targetHeight + interval - calendarTop
+    top + targetHeight + interval - parentTop
   )
 
   const defaultLeftValue = toAdjustedLeft(
-    scrollLeft + left + targetWidth + interval - calendarLeft
+    left + targetWidth + interval - parentLeft
   )
 
-  const topValue = top + scrollTop - calendarHeight - interval
+  const topValue = top - parentTop - calendarHeight - interval
 
-  const leftValue = left + scrollLeft - calendarWidth - interval
+  const leftValue = left - parentLeft - calendarWidth - interval
 
   switch (direction) {
     case 'bottom':
       return {
-        left: toAdjustedLeft(scrollLeft + left - calendarLeft),
+        left: toAdjustedLeft(left - parentLeft),
         top: defaultTopValue,
       }
 
     case 'top':
       return {
-        left: toAdjustedLeft(scrollLeft + left - calendarLeft),
+        left: toAdjustedLeft(left - parentLeft),
         top: topValue >= 0 ? toAdjustedTop(topValue) : defaultTopValue,
       }
 
     case 'left':
       return {
         left: leftValue > 0 ? toAdjustedLeft(leftValue) : defaultLeftValue,
-        top: toAdjustedTop(scrollTop + top - calendarTop),
+        top: toAdjustedTop(top - parentTop),
       }
 
     case 'right':
       return {
         left: defaultLeftValue,
-        top: toAdjustedTop(scrollTop + top - calendarTop),
+        top: toAdjustedTop(top - parentTop),
       }
 
     default:
