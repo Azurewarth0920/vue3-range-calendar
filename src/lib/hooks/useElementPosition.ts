@@ -11,8 +11,10 @@ export const useElementPosition = (
     height: targetHeight,
   } = el.getBoundingClientRect()
 
-  const { width: calendarWidth, height: calendarHeight } =
-    calendarEl.getBoundingClientRect()
+  const [calendarWidth, calendarHeight] = [
+    calendarEl.offsetWidth,
+    calendarEl.offsetHeight,
+  ]
 
   const { top: parentTop, left: parentLeft } =
     calendarEl.offsetParent?.getBoundingClientRect?.() ?? {
@@ -36,10 +38,6 @@ export const useElementPosition = (
     left + targetWidth + interval - parentLeft
   )
 
-  const topValue = top - parentTop - calendarHeight - interval
-
-  const leftValue = left - parentLeft - calendarWidth - interval
-
   switch (direction) {
     case 'bottom':
       return {
@@ -50,12 +48,12 @@ export const useElementPosition = (
     case 'top':
       return {
         left: toAdjustedLeft(left - parentLeft),
-        top: topValue >= 0 ? toAdjustedTop(topValue) : defaultTopValue,
+        top: toAdjustedTop(top - parentTop - calendarHeight - interval),
       }
 
     case 'left':
       return {
-        left: leftValue > 0 ? toAdjustedLeft(leftValue) : defaultLeftValue,
+        left: toAdjustedLeft(left - parentLeft - calendarWidth - interval),
         top: toAdjustedTop(top - parentTop),
       }
 

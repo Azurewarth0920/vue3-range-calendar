@@ -27,6 +27,7 @@
 
     &.-attached {
       position: absolute;
+      z-index: 99;
       visibility: hidden;
       left: 0;
       top: 0;

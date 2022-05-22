@@ -1,7 +1,7 @@
 .calendar-cell {
   padding: 0;
-  width: 100%;
-  height: var(--button-size);
+  width: var(--button-width, 100%);
+  height: var(--button-height, 35px);
   background-color: #fff;
   border: none;
   cursor: pointer;
@@ -12,7 +12,8 @@
 
   &.-year,
   &.-month {
-    --button-size: 50px;
+    --button-width: 80px;
+    --button-height: 50px;
   }
 
   &:hover:not(.-upper):not(.-lower):not(.-interval):not(.-span) {
@@ -66,9 +67,7 @@
   }
 
   &.-date,
-  &.-date,
   &.-week {
-    --button-size: 35px;
     margin-top: 5px;
 
     &.-upper {
@@ -86,9 +85,11 @@
   &.-year {
     &.-lower {
       border-top-left-radius: 6px;
+      border-bottom-left-radius: 6px;
     }
 
     &.-upper {
+      border-top-right-radius: 6px;
       border-bottom-right-radius: 6px;
     }
   }
