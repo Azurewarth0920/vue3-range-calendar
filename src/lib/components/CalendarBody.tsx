@@ -57,7 +57,7 @@ export default defineComponent({
       default: null,
     },
     unavailable: {
-      type: Array as PropType<[number, number][]>,
+      type: Array as PropType<{ lower: number; upper: number }[]>,
       default: () => [],
     },
     weekOffset: {
@@ -111,16 +111,21 @@ export default defineComponent({
           lower: Number.NEGATIVE_INFINITY,
         }
 
-      const flattedUnavailable = props.unavailable.flat()
+      console.log(props.unavailable)
+
       const upper =
-        flattedUnavailable
-          .filter(item => item > settled)
-          .sort((a, b) => b - a)[0] || Number.POSITIVE_INFINITY
+        props.unavailable
+          .map(({ lower }) => lower)
+          .filter(lower => lower > settled)
+          .sort((a, b) => a - b)[0] || Number.POSITIVE_INFINITY
 
       const lower =
-        flattedUnavailable
-          .filter(item => item < settled)
-          .sort((a, b) => a - b)[0] || Number.NEGATIVE_INFINITY
+        props.unavailable
+          .map(({ upper }) => upper)
+          .filter(upper => settled > upper)
+          .sort((a, b) => b - a)[0] || Number.NEGATIVE_INFINITY
+
+      console.log(upper, lower)
 
       return {
         upper,
@@ -177,7 +182,7 @@ export default defineComponent({
 
       if (
         props.unavailable.some(
-          ([lower, upper]) => payload >= lower && payload <= upper
+          ({ lower, upper }) => payload >= lower && payload <= upper
         ) ||
         currentAvailableSpan.value.upper < payload ||
         currentAvailableSpan.value.lower > payload

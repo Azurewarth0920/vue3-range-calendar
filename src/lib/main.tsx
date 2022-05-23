@@ -208,24 +208,24 @@ export default defineComponent({
       }
     })
 
-    const unavailable = computed<[number, number][]>(() => {
+    const unavailable = computed(() => {
       return (
-        options.value.unavailable?.map(({ from, to }) => [
-          from
+        options.value.unavailable?.map(({ from, to }) => ({
+          lower: from
             ? expandUnavailableSpan(
                 from,
                 options.value.type,
                 options.value.fixedSpan * -1
               )
             : Number.POSITIVE_INFINITY,
-          to
+          upper: to
             ? expandUnavailableSpan(
                 to,
                 options.value.type,
                 options.value.fixedSpan
               )
             : Number.NEGATIVE_INFINITY,
-        ]) ?? []
+        })) ?? []
       )
     })
 
