@@ -27,10 +27,6 @@ import TimePickerTo from './components/TimePickerTo'
 
 export default defineComponent({
   props: {
-    select: {
-      type: String,
-      default: null,
-    },
     start: {
       type: String,
       default: null,
@@ -44,7 +40,7 @@ export default defineComponent({
       default: () => ({}),
     },
   },
-  emits: ['update:select', 'update:start', 'update:end', 'apply', 'cancel'],
+  emits: ['update:start', 'update:end', 'apply', 'cancel'],
   setup(props, { emit }) {
     const options = computed(() => {
       return {
@@ -54,20 +50,12 @@ export default defineComponent({
     })
 
     const getPassiveStart = () =>
-      options.value.singleSelectMode
-        ? props.select
-          ? options.value.serializer(props.select).getTime()
-          : (null as number | null)
-        : props.start
+      props.start
         ? options.value.serializer(props.start).getTime()
         : (null as number | null)
 
     const getPassiveEnd = () =>
-      options.value.singleSelectMode
-        ? props.select
-          ? options.value.serializer(props.select).getTime()
-          : (null as number | null)
-        : props.end
+      props.end
         ? options.value.serializer(props.end).getTime()
         : (null as number | null)
 
@@ -75,9 +63,7 @@ export default defineComponent({
       passiveStart: getPassiveStart(),
       passiveEnd: getPassiveEnd(),
       hovered: null as number | null,
-      currentDate: serializeDate(
-        options.value.singleSelectMode ? props.select : props.start
-      ),
+      currentDate: serializeDate(props.start),
       currentType: options.value.type,
     })
 
@@ -87,12 +73,6 @@ export default defineComponent({
       get: () => {
         if (options.value.passive) {
           return internalState.passiveStart
-        }
-
-        if (options.value.singleSelectMode) {
-          return props.select
-            ? options.value.serializer(props.select).getTime()
-            : null
         }
 
         return props.start
@@ -106,10 +86,6 @@ export default defineComponent({
         }
 
         const payload = time ? options.value.deserializer(new Date(time)) : null
-
-        if (options.value.singleSelectMode) {
-          return emit('update:select', payload)
-        }
         emit('update:start', payload)
       },
     })
@@ -385,13 +361,8 @@ export default defineComponent({
         ? options.value.deserializer(new Date(end.value))
         : null
 
-      if (options.value.singleSelectMode) {
-        emit('update:select', deserializedStart)
-      } else {
-        emit('update:start', deserializedStart)
-        emit('update:end', deserializedEnd)
-      }
-
+      emit('update:start', deserializedStart)
+      emit('update:end', deserializedEnd)
       emit('apply')
     }
 
