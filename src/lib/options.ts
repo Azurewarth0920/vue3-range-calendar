@@ -22,7 +22,8 @@ export type Options = {
   maxSpan?: Span
   unavailable?: { from?: Date; to?: Date }[]
   passive?: true | { applyText?: string; cancelText?: string }
-  time?: {
+  timeSelection?: true
+  timeOptions?: {
     tick?: number
     singleSelectMode: false
     span?: {

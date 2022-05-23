@@ -403,7 +403,8 @@ export default defineComponent({
 
     const isTimeRanged = computed(
       () =>
-        !options.value.singleSelectMode || !options.value.time?.singleSelectMode
+        !options.value.singleSelectMode ||
+        !options.value.timeOptions?.singleSelectMode
     )
 
     return () => (
@@ -440,23 +441,23 @@ export default defineComponent({
               fixedSpan={options.value.fixedSpan}
             />
             {index === 0 &&
-              options.value.time &&
+              options.value.timeSelection &&
               ['week', 'date'].includes(internalState.currentType) && (
                 <TimePickerFrom
-                  tick={options.value.time?.tick}
-                  span={options.value.time?.span}
+                  tick={options.value.timeOptions?.tick}
+                  span={options.value.timeOptions?.span}
                   isRange={isTimeRanged.value}
                   isSameDay={isSameDay.value}
                   v-model={timeStart.value}
                 />
               )}
             {index === options.value.count - 1 &&
-              options.value.time &&
+              options.value.timeSelection &&
               isTimeRanged.value &&
               ['week', 'date'].includes(internalState.currentType) && (
                 <TimePickerTo
-                  tick={options.value.time?.tick}
-                  span={options.value.time?.span?.to}
+                  tick={options.value.timeOptions?.tick}
+                  span={options.value.timeOptions?.span?.to}
                   isSameDay={isSameDay.value}
                   from={timeStart.value}
                   v-model={timeEnd.value}
