@@ -53,21 +53,27 @@ export default defineComponent({
       }
     })
 
-    const internalState = reactive({
-      passiveStart: options.value.singleSelectMode
+    const getPassiveStart = () =>
+      options.value.singleSelectMode
         ? props.select
           ? options.value.serializer(props.select).getTime()
           : (null as number | null)
         : props.start
         ? options.value.serializer(props.start).getTime()
-        : (null as number | null),
-      passiveEnd: options.value.singleSelectMode
+        : (null as number | null)
+
+    const getPassiveEnd = () =>
+      options.value.singleSelectMode
         ? props.select
           ? options.value.serializer(props.select).getTime()
           : (null as number | null)
         : props.end
         ? options.value.serializer(props.end).getTime()
-        : (null as number | null),
+        : (null as number | null)
+
+    const internalState = reactive({
+      passiveStart: getPassiveStart(),
+      passiveEnd: getPassiveEnd(),
       hovered: null as number | null,
       currentDate: serializeDate(
         options.value.singleSelectMode ? props.select : props.start
@@ -118,6 +124,7 @@ export default defineComponent({
       set: (time: number | null) => {
         if (options.value.passive) {
           internalState.passiveEnd = time
+          return
         }
 
         emit(
@@ -370,15 +377,28 @@ export default defineComponent({
     )
 
     const handleApply = () => {
-      const payload = options.value.singleSelectMode
-        ? {
-            start: start.value ? new Date(start.value) : null,
-            end: end.value ? new Date(end.value) : null,
-          }
-        : {
-            select: start.value ? new Date(start.value) : null,
-          }
-      emit('apply', payload)
+      const deserializedStart = start.value
+        ? options.value.deserializer(new Date(start.value))
+        : null
+
+      const deserializedEnd = end.value
+        ? options.value.deserializer(new Date(end.value))
+        : null
+
+      if (options.value.singleSelectMode) {
+        emit('update:select', deserializedStart)
+      } else {
+        emit('update:start', deserializedStart)
+        emit('update:end', deserializedEnd)
+      }
+
+      emit('apply')
+    }
+
+    const handleCancel = () => {
+      internalState.passiveStart = getPassiveStart()
+      internalState.passiveEnd = getPassiveEnd()
+      emit('cancel')
     }
 
     const isTimeRanged = computed(
@@ -445,7 +465,7 @@ export default defineComponent({
             {index === options.value.count - 1 && options.value.passive && (
               <CalendarFooter
                 onApply={handleApply}
-                onCancel={() => emit('cancel')}
+                onCancel={handleCancel}
                 isSelected={isSelected.value}
                 applyText={
                   typeof options.value.passive === 'boolean'
