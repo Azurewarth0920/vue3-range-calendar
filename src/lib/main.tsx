@@ -448,12 +448,14 @@ export default defineComponent({
                 onCancel={() => emit('cancel')}
                 isSelected={isSelected.value}
                 applyText={
-                  typeof options.value.passive !== 'boolean' &&
-                  options.value.passive.applyText
+                  typeof options.value.passive === 'boolean'
+                    ? undefined
+                    : options.value.passive.applyText
                 }
                 cancelText={
-                  typeof options.value.passive !== 'boolean' &&
-                  options.value.passive.cancelText
+                  typeof options.value.passive === 'boolean'
+                    ? undefined
+                    : options.value.passive.cancelText
                 }
               />
             )}

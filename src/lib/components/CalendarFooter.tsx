@@ -8,7 +8,7 @@ export default defineComponent({
     },
     cancelText: {
       type: [String, Boolean],
-      default: 'Apply',
+      default: 'Cancel',
     },
     isSelected: {
       type: Boolean,
