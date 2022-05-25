@@ -1,5 +1,5 @@
 import { Ref } from 'vue'
-import { DateFormatterArgs, WeekFormatterArgs } from './cells'
+import { DateFormatterArgs } from './cells'
 import { toPaddingNumber } from './utils'
 
 export type Span = {
@@ -8,8 +8,6 @@ export type Span = {
 }
 
 export type Options = {
-  startDate?: Date | string
-  endDate?: Date | null
   attachElement?: Ref<HTMLElement | null>
   attachDirection?: 'top' | 'left' | 'bottom' | 'right'
   weekOffset?: number
@@ -25,7 +23,7 @@ export type Options = {
   timeSelection?: true
   timeOptions?: {
     tick?: number
-    singleSelectMode: false
+    singleSelect?: false
     span?: {
       from?: {
         hour?: number
@@ -37,13 +35,12 @@ export type Options = {
       }
     }
   }
-  singleSelectMode?: boolean
+  singleSelect?: boolean
   count?: number
   locale?: string
   type: 'date' | 'week' | 'month' | 'year'
   formatters?: {
     date?: (payload: DateFormatterArgs) => string
-    week?: (payload: WeekFormatterArgs) => string
     month?: (payload: { month: number; year: number }) => string
     year?: (payload: { year: number }) => string
   }
@@ -52,7 +49,6 @@ export type Options = {
 }
 
 export const defaults = {
-  startDate: new Date(),
   attachDirection: 'bottom',
   count: 2,
   locale: 'en',

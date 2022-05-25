@@ -230,7 +230,7 @@ export default defineComponent({
     })
 
     const maxRange = computed(() => {
-      if (!start.value || options.value.singleSelectMode) {
+      if (!start.value || options.value.singleSelect) {
         return
       }
 
@@ -277,7 +277,7 @@ export default defineComponent({
     }
 
     const handleCellHovered = (payload: number) => {
-      if (options.value.singleSelectMode) return
+      if (options.value.singleSelect) return
       internalState.hovered = payload
     }
 
@@ -299,7 +299,7 @@ export default defineComponent({
       }
 
       // Select value
-      if (options.value.singleSelectMode) {
+      if (options.value.singleSelect) {
         start.value = end.value = payload
         return
       }
@@ -343,7 +343,7 @@ export default defineComponent({
     }
 
     const isSelected = computed(() => {
-      return !!(options.value.singleSelectMode
+      return !!(options.value.singleSelect
         ? start.value && end.value
         : start.value)
     })
@@ -374,8 +374,7 @@ export default defineComponent({
 
     const isTimeRanged = computed(
       () =>
-        !options.value.singleSelectMode ||
-        !options.value.timeOptions?.singleSelectMode
+        !options.value.singleSelect || !options.value.timeOptions?.singleSelect
     )
 
     return () => (
