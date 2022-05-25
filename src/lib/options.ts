@@ -16,8 +16,8 @@ export type Options = {
     to?: number
   }
   fixedSpan?: number
-  minSpan?: Span
-  maxSpan?: Span
+  minSpan?: number
+  maxSpan?: number
   unavailable?: { from?: Date; to?: Date }[]
   passive?: true | { applyText?: string; cancelText?: string }
   timeSelection?: true

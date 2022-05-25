@@ -24,32 +24,27 @@ export const deserializeDate = (date: number) => {
 
 export const calculateSpan = (
   payload: number,
-  span: Span,
-  type: 'date' | 'week' | 'month' | 'year',
+  span: number | undefined,
+  type: 'date' | 'month' | 'year',
   direction: 1 | -1 = 1,
   offset = 0
-): number => {
+): number | undefined => {
+  if (span == null) return undefined
   const date = new Date(payload)
 
   let year = date.getFullYear()
   let month = date.getMonth()
   let day = date.getDate()
 
-  switch (span.unit) {
-    case 'day':
-      day +=
-        span.value * direction + (['date', 'week'].includes(type) ? offset : 0)
-      break
-    case 'week':
-      day +=
-        span.value * direction * 7 +
-        (['date', 'week'].includes(type) ? offset : 0)
+  switch (type) {
+    case 'date':
+      day += span * direction + offset
       break
     case 'month':
-      month += span.value * direction + (type === 'month' ? offset : 0)
+      month += span * direction + offset
       break
     case 'year':
-      year += span.value * direction + (type === 'year' ? offset : 0)
+      year += span * direction + offset
       break
   }
 

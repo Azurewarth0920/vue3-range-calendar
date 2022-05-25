@@ -230,44 +230,40 @@ export default defineComponent({
     })
 
     const maxRange = computed(() => {
-      if (!start.value || options.value.singleSelect) {
+      if (
+        !start.value ||
+        options.value.singleSelect ||
+        options.value.type === 'week'
+      ) {
         return
       }
 
       return {
-        maxUpper: options.value.maxSpan
-          ? calculateSpan(
-              start.value,
-              options.value.maxSpan,
-              options.value.type
-            )
-          : undefined,
-        maxLower: options.value.maxSpan
-          ? calculateSpan(
-              start.value,
-              options.value.maxSpan,
-              options.value.type,
-              -1
-            )
-          : undefined,
-        minUpper: options.value.minSpan
-          ? calculateSpan(
-              start.value,
-              options.value.minSpan,
-              options.value.type,
-              1,
-              -1
-            )
-          : undefined,
-        minLower: options.value.minSpan
-          ? calculateSpan(
-              start.value,
-              options.value.minSpan,
-              options.value.type,
-              -1,
-              1
-            )
-          : undefined,
+        maxUpper: calculateSpan(
+          start.value,
+          options.value.maxSpan,
+          options.value.type
+        ),
+        maxLower: calculateSpan(
+          start.value,
+          options.value.maxSpan,
+          options.value.type,
+          -1
+        ),
+        minUpper: calculateSpan(
+          start.value,
+          options.value.minSpan,
+          options.value.type,
+          1,
+          -1
+        ),
+        minLower: calculateSpan(
+          start.value,
+          options.value.minSpan,
+          options.value.type,
+          -1,
+          1
+        ),
       }
     })
 
