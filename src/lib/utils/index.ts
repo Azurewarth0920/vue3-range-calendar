@@ -1,5 +1,5 @@
 import { MONTH_A_YEAR, MILLISECOND_A_DAY } from '../constants'
-import { Options, Span } from '../options'
+import { Options } from '../options'
 
 export const serializeDate = (date: number | string | Date | null) => {
   const normalizedDate =

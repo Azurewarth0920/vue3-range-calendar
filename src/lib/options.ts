@@ -2,11 +2,6 @@ import { Ref } from 'vue'
 import { DateFormatterArgs } from './cells'
 import { toPaddingNumber } from './utils'
 
-export type Span = {
-  unit: 'day' | 'week' | 'month' | 'year'
-  value: number
-}
-
 export type Options = {
   attachElement?: Ref<HTMLElement | null>
   attachDirection?: 'top' | 'left' | 'bottom' | 'right'
