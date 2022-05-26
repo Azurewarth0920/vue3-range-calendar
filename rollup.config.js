@@ -40,7 +40,7 @@ export default [
     input: 'src/index.ts',
     output: [
       {
-        name: 'daterangePicker',
+        name: 'RangePicker',
         file: pkg.unpkg,
         format: 'umd',
         globals,
