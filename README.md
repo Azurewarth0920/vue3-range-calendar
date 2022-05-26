@@ -1,7 +1,7 @@
-# vue3-range-calendar
+# Vue3-range-calendar
 
 ## Overview
-vue3-range-calendar is a calendar UI component library for picking date, week, month, year ranges, with zero dependencies and high customizability for Vue3.
+Vue3-range-calendar is a calendar UI component library for picking date, week, month, year ranges, with zero dependencies and high customizability for Vue3.
 
 ## Installation
 
@@ -17,14 +17,14 @@ Install component to the Vue instance.
 
 ```JavaScript
 import { createApp } from 'vue'
-import RangeCalendar from 'vue3-range-calendar'
+import rangeCalendar from 'vue3-range-calendar'
 import 'vue3-range-calendar/dist/styles/index.css'
 
 const app = Vue.createApp({...})
-app.use(RangeCalendar)
+app.use(rangeCalendar)
 ```
 
-Then you can use component RangeCalendar on vue template.
+Then you can use the range calendar on your component.
 
 eg.
 
@@ -44,4 +44,4 @@ const end = ref<Date | null>(null)
 
 ## Docs
 
-TBD
+(Document)[https://vue3-range-calendar.azurewarth0920.com/]

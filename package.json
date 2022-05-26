@@ -1,7 +1,7 @@
 {
   "name": "vue3-range-calendar",
-  "version": "0.0.3",
-  "description": "Date range picker implements with Vue.js.",
+  "version": "0.1.0",
+  "description": "Calendar UI component library of Vue.js 3 for picking date, week, month, year ranges, with zero dependencies and high customizability.",
   "main": "dist/index.esm.js",
   "module": "dist/index.esm.js",
   "unpkg": "dist/index.umd.js",
@@ -9,11 +9,12 @@
     "dist"
   ],
   "keywords": [
-    "vue3",
+    "Vue3",
     "calendar",
-    "range picker",
+    "range calendar",
     "date range",
-    "week range"
+    "week range",
+    "date range picker"
   ],
   "scripts": {
     "dev": "vite",

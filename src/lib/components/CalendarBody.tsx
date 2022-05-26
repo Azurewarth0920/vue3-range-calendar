@@ -111,8 +111,6 @@ export default defineComponent({
           lower: Number.NEGATIVE_INFINITY,
         }
 
-      console.log(props.unavailable)
-
       const upper =
         props.unavailable
           .map(({ lower }) => lower)
@@ -124,8 +122,6 @@ export default defineComponent({
           .map(({ upper }) => upper)
           .filter(upper => settled > upper)
           .sort((a, b) => b - a)[0] || Number.NEGATIVE_INFINITY
-
-      console.log(upper, lower)
 
       return {
         upper,
