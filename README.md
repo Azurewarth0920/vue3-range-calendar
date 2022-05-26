@@ -42,6 +42,6 @@ const end = ref<Date | null>(null)
 </template>
 ```
 
-## Docs
+## Documentation
 
-(Document)[https://vue3-range-calendar.azurewarth0920.com/]
+To check out [examples](https://vue3-range-calendar.azurewarth0920.com/example.html) and [options](https://vue3-range-calendar.azurewarth0920.com/options.html), visit [here](https://vue3-range-calendar.azurewarth0920.com/).
