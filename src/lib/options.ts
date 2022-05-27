@@ -52,9 +52,9 @@ export const defaults = {
   fixedSpan: 0,
   serializer: (dateString: string) => new Date(dateString),
   deserializer: (dateObj: Date) =>
-    `${dateObj.getFullYear()}-${
+    `${dateObj.getFullYear()}/${
       dateObj.getMonth() + 1
-    }-${dateObj.getDate()} ${toPaddingNumber(
+    }/${dateObj.getDate()} ${toPaddingNumber(
       dateObj.getHours()
     )}:${toPaddingNumber(dateObj.getMinutes())}`,
 } as const
