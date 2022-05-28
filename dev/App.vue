@@ -4,7 +4,7 @@
     <input v-model="end" type="text" />
   </p>
   <hr />
-  <range-calendar v-model:start="start" v-model:end="end" :options="options" />
+  <range-calendar v-model:start="start" v-model:end="end" />
 </template>
 
 <script setup lang="ts">
