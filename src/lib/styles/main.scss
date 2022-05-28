@@ -1,9 +1,3 @@
-@import './components/_header';
-@import './components/_body';
-@import './components/_cell';
-@import './components/_footer';
-@import './components/_time-picker';
-
 .calendar {
   &-unit {
     max-width: 245px;
@@ -24,6 +18,9 @@
     border: 1px solid rgb(239, 239, 239);
     background-color: #fff;
     border-radius: 3px;
+    color: #000;
+    -webkit-font-smoothing: antialiased;
+    font-family: Inter, sans-serif;
 
     &.-attached {
       position: absolute;
@@ -32,5 +29,23 @@
       left: 0;
       top: 0;
     }
+
+    * {
+      font: inherit;
+      box-sizing: border-box;
+      padding: 0;
+      margin: 0;
+
+      &::after,
+      &::before {
+        box-sizing: border-box;
+      }
+    }
+
+    @import './components/_header';
+    @import './components/_body';
+    @import './components/_cell';
+    @import './components/_footer';
+    @import './components/_time-picker';
   }
 }

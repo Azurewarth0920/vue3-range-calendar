@@ -1,11 +1,12 @@
 .calendar-cell {
   padding: 0;
   margin-top: 5px;
-  width: var(--button-width, 100%);
+  width: var(--button-width, 35px);
   height: var(--button-height, 35px);
   background-color: #fff;
   border: none;
   cursor: pointer;
+  color: inherit;
 
   &_leading {
     text-align: center;
@@ -39,10 +40,10 @@
     &::after {
       content: '';
       position: absolute;
-      top: 5%;
-      left: 5%;
-      width: 90%;
-      height: 90%;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
       border: 2px solid #3dff98;
       border-radius: 10px;
     }

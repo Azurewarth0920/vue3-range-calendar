@@ -3,9 +3,12 @@
   height: 30px;
 
   &_title {
+    color: inherit;
+
     background-color: white;
     border: none;
     cursor: pointer;
+    padding: 6px;
   }
 
   &_text {
