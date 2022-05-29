@@ -19,6 +19,7 @@ import {
   toPaddingNumber,
   trimTime,
   expandUnavailableSpan,
+  deserializeDate,
 } from './utils'
 import { CELLS_IN_BLOCK, MONTH_A_YEAR } from './constants'
 import { useElementPosition } from './hooks/useElementPosition'
@@ -40,7 +41,18 @@ export default defineComponent({
       default: () => ({}),
     },
   },
-  emits: ['update:start', 'update:end', 'apply', 'cancel'],
+  emits: [
+    'update:start',
+    'update:end',
+    'update:passive-start',
+    'update:passive-end',
+    'hover-cell',
+    'switch-next',
+    'switch-prev',
+    'switch-type',
+    'apply',
+    'cancel',
+  ],
   setup(props, { emit }) {
     const options = computed(() => {
       return {
@@ -80,12 +92,13 @@ export default defineComponent({
           : null
       },
       set: (time: number | null) => {
+        const payload = time ? options.value.deserializer(new Date(time)) : null
         if (options.value.passive) {
           internalState.passiveStart = time
+          emit('update:passive-start', payload)
           return
         }
 
-        const payload = time ? options.value.deserializer(new Date(time)) : null
         emit('update:start', payload)
       },
     })
@@ -98,15 +111,15 @@ export default defineComponent({
         return props.end ? options.value.serializer(props.end).getTime() : null
       },
       set: (time: number | null) => {
+        const payload = time ? options.value.deserializer(new Date(time)) : null
+
         if (options.value.passive) {
           internalState.passiveEnd = time
+          emit('update:passive-end', payload)
           return
         }
 
-        emit(
-          'update:end',
-          time ? options.value.deserializer(new Date(time)) : null
-        )
+        emit('update:end', payload)
       },
     })
 
@@ -184,9 +197,14 @@ export default defineComponent({
       }
     )
 
-    const handleSwitch = (direction: 1 | -1 = 1) => {
+    const handleSwitch = (direction: 1 | -1) => {
       internalState.currentDate +=
         dateOffset.value * direction * options.value.count
+
+      emit(
+        direction > 0 ? 'switch-next' : 'switch-prev',
+        deserializeDate(internalState.currentDate)
+      )
     }
 
     const bound = computed<{
@@ -270,9 +288,15 @@ export default defineComponent({
     const handleSwitchType = () => {
       internalState.currentType =
         internalState.currentType === 'month' ? 'year' : 'month'
+
+      emit('switch-type', {
+        type: internalState.currentType,
+      })
     }
 
     const handleCellHovered = (payload: number) => {
+      emit('hover-cell', options.value.deserializer(new Date(payload)))
+
       if (options.value.singleSelect) return
       internalState.hovered = payload
     }
@@ -286,10 +310,18 @@ export default defineComponent({
 
         switch (internalState.currentType) {
           case 'year':
+            emit('switch-type', {
+              type: 'month',
+              payload: deserializeDate(internalState.currentDate),
+            })
             internalState.currentType = 'month'
             return
           case 'month':
             internalState.currentType = options.value.type
+            emit('switch-type', {
+              type: options.value.type,
+              payload: deserializeDate(internalState.currentDate),
+            })
             return
         }
       }
@@ -387,8 +419,8 @@ export default defineComponent({
               showGoPrev={index === 0}
               showGoNext={index === options.value.count - 1}
               onPrevClicked={() => handleSwitch(-1)}
+              onNextClicked={() => handleSwitch(1)}
               onSwitchType={handleSwitchType}
-              onNextClicked={handleSwitch}
             />
             <CalendarBody
               date={internalState.currentDate + index * dateOffset.value}
