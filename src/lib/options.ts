@@ -8,7 +8,6 @@ export type Preset = {
     start: Date
     end: Date
   }
-  matcher?: ({ start, end }: { start: Date; end: Date }) => boolean
 }
 
 export type Options = {
@@ -42,7 +41,7 @@ export type Options = {
   singleSelect?: boolean
   count?: number
   locale?: string
-  type: 'date' | 'week' | 'month' | 'year'
+  type?: 'date' | 'week' | 'month' | 'year'
   formatters?: {
     date?: (payload: DateFormatterArgs) => string
     month?: (payload: { month: number; year: number }) => string
@@ -50,7 +49,7 @@ export type Options = {
   }
   serializer?: (dateString: string) => Date
   deserializer?: (dateObj: Date) => string
-  presets: Preset[]
+  presets?: Preset[]
 }
 
 export const defaults = {

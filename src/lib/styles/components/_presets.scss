@@ -1,0 +1,27 @@
+.calendar-presets {
+  list-style-type: none;
+  padding-left: 25px;
+
+  &_item {
+    margin-top: 10px;
+
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+
+  &_button {
+    display: inline-block;
+    padding: 5px 10px;
+    background-color: transparent;
+    border: 2px solid #2aa9fd;
+    cursor: pointer;
+    border-radius: 6px;
+    width: 100%;
+
+    &.-active {
+      background-color: #2aa9fd;
+      color: #fff;
+    }
+  }
+}

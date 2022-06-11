@@ -481,10 +481,12 @@ export default defineComponent({
             )}
           </div>
         ))}
-        {options.value.presets.length && (
+        {options.value.presets && options.value.presets.length && (
           <CalendarPresets
-            v-model:start="start"
-            v-model:end="end"
+            v-model:start={start.value}
+            v-model:end={end.value}
+            serializer={options.value.serializer}
+            deserializer={options.value.deserializer}
             presets={options.value.presets}
           />
         )}
