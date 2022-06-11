@@ -2,6 +2,15 @@ import { Ref } from 'vue'
 import { DateFormatterArgs } from './cells'
 import { toPaddingNumber } from './utils'
 
+export type Preset = {
+  text: string
+  modifier: ({ start, end }: { start: Date; end: Date }) => {
+    start: Date
+    end: Date
+  }
+  matcher?: ({ start, end }: { start: Date; end: Date }) => boolean
+}
+
 export type Options = {
   attachElement?: Ref<HTMLElement | null>
   attachDirection?: 'top' | 'left' | 'bottom' | 'right'
@@ -41,6 +50,7 @@ export type Options = {
   }
   serializer?: (dateString: string) => Date
   deserializer?: (dateObj: Date) => string
+  presets: Preset[]
 }
 
 export const defaults = {
