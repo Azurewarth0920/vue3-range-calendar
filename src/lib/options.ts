@@ -2,6 +2,14 @@ import { Ref } from 'vue'
 import { DateFormatterArgs } from './cells'
 import { toPaddingNumber } from './utils'
 
+export type Preset = {
+  text: string
+  modifier: ({ start, end }: { start: Date; end: Date }) => {
+    start: Date
+    end: Date
+  }
+}
+
 export type Options = {
   attachElement?: Ref<HTMLElement | null>
   attachDirection?: 'top' | 'left' | 'bottom' | 'right'
@@ -33,7 +41,7 @@ export type Options = {
   singleSelect?: boolean
   count?: number
   locale?: string
-  type: 'date' | 'week' | 'month' | 'year'
+  type?: 'date' | 'week' | 'month' | 'year'
   formatters?: {
     date?: (payload: DateFormatterArgs) => string
     month?: (payload: { month: number; year: number }) => string
@@ -41,6 +49,7 @@ export type Options = {
   }
   serializer?: (dateString: string) => Date
   deserializer?: (dateObj: Date) => string
+  presets?: Preset[]
 }
 
 export const defaults = {

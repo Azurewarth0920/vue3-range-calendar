@@ -10,6 +10,7 @@ import {
 import CalendarBody from './components/CalendarBody'
 import CalendarHeader from './components/CalendarHeader'
 import CalendarFooter from './components/CalendarFooter'
+import CalendarPresets from './components/CalendarPresets'
 import { defaults, Options } from './options'
 import {
   calculateSpan,
@@ -480,6 +481,16 @@ export default defineComponent({
             )}
           </div>
         ))}
+        {options.value.presets && options.value.presets.length && (
+          <CalendarPresets
+            v-model:start={start.value}
+            v-model:end={end.value}
+            timeSelection={options.value.timeSelection || false}
+            serializer={options.value.serializer}
+            deserializer={options.value.deserializer}
+            presets={options.value.presets}
+          />
+        )}
       </div>
     )
   },

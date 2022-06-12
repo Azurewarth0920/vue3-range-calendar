@@ -34,7 +34,7 @@ export default defineComponent({
       default: () => ({}),
     },
     type: {
-      type: String as PropType<Options['type']>,
+      type: String as PropType<Required<Options>['type']>,
       required: true,
     },
     bound: {

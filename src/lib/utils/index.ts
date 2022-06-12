@@ -125,9 +125,6 @@ export const expandUnavailableSpan = (
   if (Math.abs(span) <= 1) return trimmedTime
   const trimmedSpan = span > 0 ? span - 2 : span + 2
   switch (type) {
-    case 'date':
-      return trimmedTime + trimmedSpan * MILLISECOND_A_DAY
-
     case 'month':
       return new Date(
         date.getFullYear(),
@@ -145,6 +142,8 @@ export const expandUnavailableSpan = (
     case 'week':
       return trimmedTime
   }
+
+  return trimmedTime + trimmedSpan * MILLISECOND_A_DAY
 }
 
 export const toPaddingNumber = (num: number) => num.toString().padStart(2, '0')
