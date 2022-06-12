@@ -1,5 +1,6 @@
 import { defineComponent, PropType } from 'vue'
 import { Preset } from '../options'
+import { trimTime } from '../utils'
 
 export default defineComponent({
   props: {
@@ -23,10 +24,16 @@ export default defineComponent({
       type: Function as PropType<(dateObj: Date) => string>,
       required: true,
     },
+    timeSelection: {
+      type: Boolean,
+      required: true,
+    },
   },
   emits: ['update:start', 'update:end'],
   setup(props, { emit }) {
-    const { serializer, deserializer } = props
+    const serializer = props.timeSelection
+      ? (date: Date) => props.serializer(props.deserializer(date)).getTime()
+      : (date: Date) => trimTime(date)
 
     const handleClick = (modifier: Preset['modifier']) => {
       const { start, end } = modifier({
@@ -34,10 +41,7 @@ export default defineComponent({
         end: new Date(props.end),
       })
 
-      const timeSet = [
-        serializer(deserializer(start)).getTime(),
-        serializer(deserializer(end)).getTime(),
-      ]
+      const timeSet = [serializer(start), serializer(end)]
 
       emit('update:start', Math.min(...timeSet))
       emit('update:end', Math.max(...timeSet))
@@ -49,10 +53,7 @@ export default defineComponent({
         end: new Date(props.end),
       })
 
-      const timeSet = [
-        serializer(deserializer(start)).getTime(),
-        serializer(deserializer(end)).getTime(),
-      ]
+      const timeSet = [serializer(start), serializer(end)]
 
       return (
         Math.min(...timeSet) === props.start &&

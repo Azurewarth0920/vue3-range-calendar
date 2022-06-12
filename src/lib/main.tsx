@@ -485,6 +485,7 @@ export default defineComponent({
           <CalendarPresets
             v-model:start={start.value}
             v-model:end={end.value}
+            timeSelection={options.value.timeSelection || false}
             serializer={options.value.serializer}
             deserializer={options.value.deserializer}
             presets={options.value.presets}
