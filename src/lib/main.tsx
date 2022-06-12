@@ -82,6 +82,7 @@ export default defineComponent({
 
     const calendarRef = ref<HTMLDivElement | null>(null)
 
+    // Start/End reverted.
     const start = computed<number | null>({
       get: () => {
         if (options.value.passive) {
@@ -112,10 +113,23 @@ export default defineComponent({
         return props.end ? options.value.serializer(props.end).getTime() : null
       },
       set: (time: number | null) => {
-        const payload = time ? options.value.deserializer(new Date(time)) : null
+        let orderedTime = time
+
+        if (
+          typeof time === 'number' &&
+          typeof start.value === 'number' &&
+          start.value > time
+        ) {
+          orderedTime = start.value
+          start.value = time
+        }
+
+        const payload = orderedTime
+          ? options.value.deserializer(new Date(orderedTime))
+          : null
 
         if (options.value.passive) {
-          internalState.passiveEnd = time
+          internalState.passiveEnd = orderedTime
           emit('update:passive-end', payload)
           return
         }
