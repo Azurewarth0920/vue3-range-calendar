@@ -58,17 +58,14 @@ export const getDateCells = (
     })
 }
 
-export const getWeekHeader = (locale = 'en', offset = 0) => {
-  const FIRST_SUNDAY_TIME = 226800000
-  return [...Array(7)]
-    .map((_, index) => Math.abs(index - offset) % 7)
-    .map(day => new Date(FIRST_SUNDAY_TIME + MILLISECOND_A_DAY * day))
-    .map(date =>
-      new Intl.DateTimeFormat(locale, {
-        weekday: 'short',
-      }).format(date)
-    )
-}
+export const getWeekHeader = (locale = 'en', offset = 0) => [...Array(7)]
+  .map((_, index) => Math.abs(index - offset) % 7)
+  .map(day => new Date(new Date().getTime() - (new Date().getDay()) * MILLISECOND_A_DAY + MILLISECOND_A_DAY * day))
+  .map(date =>
+    new Intl.DateTimeFormat(locale, {
+      weekday: 'short',
+    }).format(date)
+  )
 
 export const getMonthCells = () => [...Array(12)].map((_, key) => key + 1)
 
