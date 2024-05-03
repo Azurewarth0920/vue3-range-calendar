@@ -1,0 +1,13 @@
+{
+  "name": "lib",
+  "version": "0.3.3",
+  "scripts": {
+    "dev": "vite",
+    "build": "rm -rf ./dist && yarn build:lib && yarn build:types",
+    "build:lib": "rollup -c rollup.config.js",
+    "build:types": "tsc src/types/index.ts --declaration --emitDeclarationOnly --outDir dist"
+  },
+  "private": true,
+  "type": "module",
+  "license": "MIT"
+}
