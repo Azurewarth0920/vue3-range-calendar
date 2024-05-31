@@ -80,7 +80,7 @@ export default defineComponent({
       currentType: options.value.type,
     })
 
-    const calendarRef = ref<HTMLDivElement | null>(null)
+    const calendarRef = ref<HTMLElement | null>(null)
 
     // Start/End reverted.
     const start = computed<number | null>({
@@ -182,7 +182,7 @@ export default defineComponent({
         : 1
     })
 
-    const attachedStyles = ref<{ [key: string]: unknown }>({})
+    const attachedStyles = ref({})
 
     const mountAttachmentStyle = () => {
       if (
