@@ -1,15 +1,25 @@
 <template>
   <p>
-    Start: <input v-model="start" type="text" /> End:
-    <input v-model="end" type="text" />
+    Start: <input
+      v-model="start"
+      type="text"
+    > End:
+    <input
+      v-model="end"
+      type="text"
+    >
   </p>
-  <hr />
-  <range-calendar v-model:start="start" v-model:end="end" :options="options" />
+  <hr>
+  <range-calendar
+    v-model:start="start"
+    v-model:end="end"
+    :options="options"
+  />
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Options } from '../src/types'
+import { Options } from '@vue3-range-calendar/lib/dist/types'
 const start = ref<Date | null>(null)
 const end = ref<Date | null>(null)
 const today = new Date()

@@ -1,34 +1,36 @@
 {
   "name": "@vue3-range-calendar/lib",
   "version": "0.3.3",
-  "main": "dist/index.mjs",
-  "module": "dist/index.mjs",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
   "scripts": {
-    "build": "rm -rf ./dist && pnpm build:lib && pnpm build:types",
+    "build": "rm -rf ./dist && pnpm build:lib && pnpm build:types && pnpm build:style",
     "build:lib": "rollup -c rollup.config.js",
-    "build:types": "tsc types/index.ts --declaration --emitDeclarationOnly --outDir dist"
+    "build:style": "sass src/styles/main.scss dist/index.css",
+    "build:types": "tsc index.ts --declaration --emitDeclarationOnly --outDir dist"
   },
   "private": true,
   "type": "module",
   "devDependencies": {
     "@babel/plugin-external-helpers": "^7.24.6",
     "@rollup/plugin-babel": "^6.0.4",
-    "@rollup/plugin-node-resolve": "^13.3.0",
-    "@rollup/plugin-replace": "^4.0.0",
+    "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-terser": "^0.4.4",
-    "@rollup/plugin-typescript": "^8.5.0",
+    "@rollup/plugin-typescript": "^11.1.6",
     "@types/node": "^20.12.13",
     "@vue/babel-plugin-jsx": "^1.2.2",
     "rollup": "^4.18.0",
-    "rollup-plugin-scss": "^4.0.0",
     "sass": "^1.77.3",
     "vitest": "^1.6.0",
     "vue": "^3.4.27",
     "vue-tsc": "^2.0.19"
   },
+  "files": [
+    "dist"
+  ],
   "exports": {
     ".": {
-      "import": "./dist/index.mjs",
+      "import": "./dist/index.js",
       "require": "./dist/index.cjs"
     }
   }

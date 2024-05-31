@@ -1,6 +1,6 @@
 import { App, Plugin } from 'vue'
+import type { Options } from './options'
 import RangeCalendar from './main'
-import './styles/main.scss'
 
 const plugin: Plugin = {
   install: (app: App) => {
@@ -8,5 +8,5 @@ const plugin: Plugin = {
   },
 }
 
-export { RangeCalendar }
+export { RangeCalendar, Options }
 export default plugin

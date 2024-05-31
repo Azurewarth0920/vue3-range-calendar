@@ -2,7 +2,6 @@ import babel from '@rollup/plugin-babel'
 import typescript from '@rollup/plugin-typescript'
 import terser from '@rollup/plugin-terser'
 import pkg from '../../package.json' with { type: "json" };
-import scss from 'rollup-plugin-scss'
 import resolve from '@rollup/plugin-node-resolve'
 
 export default [
@@ -18,9 +17,6 @@ export default [
     ],
     external: ['vue'],
     plugins: [
-      scss({
-        output: 'dist/styles/index.css',
-      }),
       typescript({
         sourceMap: true,
       }),
@@ -44,9 +40,6 @@ export default [
     ],
     external: ['vue'],
     plugins: [
-      scss({
-        output: 'dist/styles/index.css',
-      }),
       typescript({
         sourceMap: false,
       }),
