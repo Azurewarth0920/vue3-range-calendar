@@ -22,7 +22,9 @@
     "node": ">=21.0.0"
   },
   "scripts": {
-    "dev": "turbo dev --filter=./packages/playground",
+    "dev": "turbo dev",
+    "dev:lib": "turbo dev --filter=./packages/lib",
+    "dev:playground": "turbo dev --filter=./playground",
     "build": "turbo build --filter=./packages/lib",
     "docs:dev": "turbo dev --filter=./docs",
     "docs:build": "turbo build --filter=./docs",

@@ -31,11 +31,11 @@ export default defineComponent({
   props: {
     start: {
       type: String,
-      default: null,
+      required: true
     },
     end: {
       type: String,
-      default: null,
+      default: '',
     },
     options: {
       type: Object as PropType<Options>,

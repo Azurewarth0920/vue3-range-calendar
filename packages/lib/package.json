@@ -4,10 +4,12 @@
   "main": "dist/index.js",
   "module": "dist/index.js",
   "scripts": {
-    "build": "rm -rf ./dist && pnpm build:lib && pnpm build:types && pnpm build:style",
+    "dev": "pnpm build:lib --watch",
+    "build": "pnpm build:lib && pnpm build:types && pnpm build:style",
     "build:lib": "rollup -c rollup.config.js",
     "build:style": "sass src/styles/main.scss dist/index.css",
-    "build:types": "tsc index.ts --declaration --emitDeclarationOnly --outDir dist"
+    "build:types": "tsc -p tsconfig.type.json",
+    "prepare": "rm -rf ./dist && pnpm build"
   },
   "private": true,
   "type": "module",
@@ -32,6 +34,7 @@
     ".": {
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
-    }
+    },
+    "./index.css": "./dist/index.css"
   }
 }

@@ -19,9 +19,10 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Options } from '@vue3-range-calendar/lib/dist/types'
-const start = ref<Date | null>(null)
-const end = ref<Date | null>(null)
+import { Options, RangeCalendar } from '@vue3-range-calendar/lib'
+import '@vue3-range-calendar/lib/index.css'
+const start = ref<string>('')
+const end = ref<string>('')
 const today = new Date()
 
 const options: Options = {
