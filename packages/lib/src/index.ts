@@ -8,5 +8,7 @@ const plugin: Plugin = {
   },
 }
 
-export { RangeCalendar, Options }
+const defineOptions = (options: Options) => options
+
+export { RangeCalendar, Options, defineOptions }
 export default plugin

@@ -48,6 +48,8 @@ import 'vue3-range-calendar/index.css'
 </template>
 ```
 
+:::
+
 ## Options
 
 ```ts
@@ -186,7 +188,23 @@ interface Options {
   * The language of the calendar, utilized by the displayed text of weekday.
   * @default: 'en'
   */
-
  locale: localeString
 }
+```
+
+:::
+
+## TypeScript
+
+You can use the function `defineOptions` to help you defining your options.
+
+```Vue
+<script setup lang="ts">
+import { defineOptions } from 'vue3-range-calendar'
+const options = defineOptions({ options... })
+</script>
+
+<template>
+  <range-calendar :options="options" />
+</template>
 ```
