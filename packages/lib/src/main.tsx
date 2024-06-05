@@ -45,9 +45,7 @@ export default defineComponent({
   emits: [
     'update:start',
     'update:end',
-    'update:passive-start',
-    'update:passive-end',
-    'hover-cell',
+    'hover',
     'switch-next',
     'switch-prev',
     'switch-type',
@@ -97,7 +95,6 @@ export default defineComponent({
         const payload = time ? options.value.deserializer(new Date(time)) : null
         if (options.value.passive) {
           internalState.passiveStart = time
-          emit('update:passive-start', payload)
           return
         }
 
@@ -130,7 +127,6 @@ export default defineComponent({
 
         if (options.value.passive) {
           internalState.passiveEnd = orderedTime
-          emit('update:passive-end', payload)
           return
         }
 
@@ -310,7 +306,7 @@ export default defineComponent({
     }
 
     const handleCellHovered = (payload: number) => {
-      emit('hover-cell', options.value.deserializer(new Date(payload)))
+      emit('hover', options.value.deserializer(new Date(payload)))
 
       if (options.value.singleSelect) return
       internalState.hovered = payload

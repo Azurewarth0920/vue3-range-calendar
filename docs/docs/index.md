@@ -192,6 +192,60 @@ interface Options {
 }
 ```
 
+## Events
+
+```ts
+interface Events {
+  /**
+  * When the start of the range is chosen, the start value will be emitted.
+  * The value will be formatted by deserializer
+  * @default: 'YYYY/MM/DD HH:mm'
+  */
+  "update:start": string
+
+  /**
+  * When the end of the range is chosen, the start value will be emitted.
+  * The value will be formatted by deserializer
+  * @default: 'YYYY/MM/DD HH:mm'
+  */
+  "update:end": string
+  
+  /**
+  * When a cell is hovered, the value of the cell will be emitted.
+  * The value will be formatted by deserializer
+  * @default: 'YYYY/MM/DD HH:mm'
+  */
+  hover: string
+  
+  /**
+  * After switching to the next period, this month, year of next period will be emitted.
+  */
+  switch-next: { year: number, month: number }
+
+  /**
+  * After switching to the previous period, this month, year of previous period will be emitted.
+  */
+  switch-prev: { year: number, month: number }
+
+  /**
+    * When the calendar is switched to a different type, this event will be emitted.
+    * If the type is switching from the bigger range to smaller range (Eg. `year` -> `month`, `month` -> `week`), the payload of chosen cell will be also emitted.
+  */
+  switch-type: { type: 'date' | 'week' | 'month' | 'year', payload?: { year: number, month: number }}
+
+  /**
+    * This event will be emitted when apply button is clicked in passive mode.
+    * And `update:start` and `update:end` will also be emitted
+  */
+  apply: void
+
+  /**
+    * This event will be emitted when cancel button is clicked in passive mode.
+  */
+  cancel: void
+}
+```
+
 :::
 
 ## TypeScript
