@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "vitepress": "^1.2.2"
+    "vitepress": "^1.2.2",
+    "@vue3-range-calendar/lib": "workspace:^"
   }
 }

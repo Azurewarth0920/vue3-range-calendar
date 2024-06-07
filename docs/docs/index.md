@@ -1,7 +1,7 @@
-# vue3-range-calendar
+# Vue3 range calendar
 
 ## Overview
-vue3-range-calendar is a calendar UI component library for picking date, week, month, year ranges, with zero dependencies for Vue3.
+Vue3 range calendar is a calendar UI component library for picking date, week, month, year ranges, with zero dependencies for Vue3.
 
 ## Installation
 
@@ -245,8 +245,6 @@ interface Events {
   cancel: void
 }
 ```
-
-:::
 
 ## TypeScript
 

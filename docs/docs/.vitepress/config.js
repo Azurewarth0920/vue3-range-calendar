@@ -4,6 +4,9 @@ export default {
   description: 'Just playing around.',
 
   themeConfig: {
-    // theme-level options
+    nav: [
+      { text: 'Home', link: '/' },
+      { text: 'Examples', link: '/examples' },
+    ]
   }
 }

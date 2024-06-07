@@ -1,5 +1,7 @@
 <!-- Setup -->
 <script setup>
+import { defineOptions, RangeCalendar } from '@vue3-range-calendar/lib'
+import '@vue3-range-calendar/lib/index.css'
 import { ref, computed } from 'vue'
 // Basic Usage
 const start = ref(null)
