@@ -115,7 +115,7 @@ export default defineComponent({
         if (
           typeof time === 'number' &&
           typeof start.value === 'number' &&
-          start.value > time
+          start.value > time && !options.value.singleSelect
         ) {
           orderedTime = start.value
           start.value = time
