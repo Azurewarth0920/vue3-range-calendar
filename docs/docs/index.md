@@ -248,12 +248,12 @@ interface Events {
 
 ## TypeScript
 
-You can use the function `defineOptions` to help you defining your options.
+You can use the function `defineCalendarOptions` to help you defining your options.
 
 ```Vue
 <script setup lang="ts">
-import { defineOptions } from 'vue3-range-calendar'
-const options = defineOptions({ options... })
+import { defineCalendarOptions } from 'vue3-range-calendar'
+const options = defineCalendarOptions({ options... })
 </script>
 
 <template>

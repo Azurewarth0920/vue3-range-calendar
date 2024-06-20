@@ -19,13 +19,13 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { defineOptions, RangeCalendar } from '@vue3-range-calendar/lib'
+import { defineCalendarOptions, RangeCalendar } from '@vue3-range-calendar/lib'
 import '@vue3-range-calendar/lib/index.css'
 const start = ref<string>('')
 const end = ref<string>('')
 const today = new Date()
 
-const options = defineOptions({
+const options = defineCalendarOptions({
   presets: [
     {
       text: 'Last 7 days',

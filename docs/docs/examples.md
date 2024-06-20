@@ -1,6 +1,6 @@
 <!-- Setup -->
 <script setup>
-import { defineOptions, RangeCalendar } from '@vue3-range-calendar/lib'
+import { defineCalendarOptions, RangeCalendar } from '@vue3-range-calendar/lib'
 import '@vue3-range-calendar/lib/index.css'
 import { ref, computed } from 'vue'
 // Basic Usage
@@ -24,15 +24,16 @@ const yearStart = ref(null)
 const yearEnd = ref(null)
 
 // Unavailable
-const [currentYear, currentMonth] = [new Date().getFullYear(), new Date().getMonth()]
-const firstSunday = (6 - new Date(currentYear, currentMonth, 1).getDay()) % 6
-const monthLength = new Date(currentYear, currentMonth + 1, -1).getDate()
-const tick = Math.ceil((monthLength - firstSunday) / 7)
+const [
+  currentYear,
+  currentMonth,
+  currentDate
+] = [new Date().getFullYear(), new Date().getMonth(), new Date().getDate()]
 const unavailableOptions = {
-  unavailable: [...Array(tick)].map((_, index) => ({
-    from: new Date(currentYear, currentMonth, firstSunday + index * 7),
-    to: new Date(currentYear, currentMonth, firstSunday + 1 + index * 7)
-  }))
+  unavailable: [{
+    from: new Date(currentYear, currentMonth, currentDate),
+    to: new Date(currentYear, currentMonth,  currentDate + 5 )
+  }]
 }
 
 const today = new Date()
@@ -124,15 +125,15 @@ const options = computed(() => ({
 </script>
 
 <template>
-<select v-model="attachDirection" ref="attachElement">
-  <option value="-" disabled>-</option>
-  <option value="top">top</option>
-  <option value="bottom">bottom</option>
-  <option value="left">left</option>
-  <option value="right">right</option>
-</select>
-<br>
-<range-calendar v-if="attachDirection !== '-'" :options="options" />
+  <select v-model="attachDirection" ref="attachElement">
+    <option value="-" disabled>-</option>
+    <option value="top">top</option>
+    <option value="bottom">bottom</option>
+    <option value="left">left</option>
+    <option value="right">right</option>
+  </select>
+  <br>
+  <range-calendar v-if="attachDirection !== '-'" :options="options" />
 </template>
 ```
 
@@ -246,17 +247,16 @@ By passing the unavailable property to options, cells can be prevent from select
 
 ```vue
 <script setup>
-const start = ref(null)
-const end = ref(null)
-const [currentYear, currentMonth] = [new Date().getFullYear(), new Date().getMonth()]
-const firstSunday = (6 - new Date(currentYear, currentMonth, 1).getDay()) % 6
-const monthLength = new Date(currentYear, currentMonth + 1, -1).getDate()
-const tick = Math.ceil((monthLength - firstSunday) / 7)
+const [
+  currentYear,
+  currentMonth,
+  currentDate
+] = [new Date().getFullYear(), new Date().getMonth(), new Date().getDate()]
 const unavailableOptions = {
-  unavailable: [...Array(tick)].map((_, index) => ({
-    from: new Date(currentYear, currentMonth, firstSunday + index * 7),
-    to: new Date(currentYear, currentMonth, firstSunday + 1 + index * 7)
-  }))
+  unavailable: [{
+    from: new Date(currentYear, currentMonth, currentDate),
+    to: new Date(currentYear, currentMonth,  currentDate + 5 )
+  }]
 }
 </script>
 ```
@@ -342,7 +342,7 @@ You can combine `timeSelection` and `singleSelect` to select a single day with t
 <range-calendar
   v-model:start="start"
   v-model:end="end"
-  :options="{ timeSelection: true, singleSelect: true }"
+  :options="{ singleSelect: true }"
 />
 <hr>
 
